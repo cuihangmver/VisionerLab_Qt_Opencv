@@ -21,6 +21,10 @@ private slots:
 private:
     Ui::DialogSlider *ui;
     QWidget *m_parent;
+
+    QHBoxLayout *qSliderHor;
+    QSpinBox *pSpinBox;
+    QSlider *pSlider;
 signals:
     void sendManualThresholdChange(int );
 };

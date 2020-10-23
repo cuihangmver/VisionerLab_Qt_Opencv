@@ -16,11 +16,11 @@ CentralWidget::CentralWidget(int a, QWidget *parent)
     m_textedit = new QTextEdit();
     // 对主界面进行布局
     // button的布局
-    QHBoxLayout *qButtonHor=new QHBoxLayout;
-    QVBoxLayout *qButtonVer=new QVBoxLayout;
-    QPushButton *btn1 = new QPushButton;
-    QPushButton *btn2 = new QPushButton;
-    QPushButton *btn3 = new QPushButton;
+    qButtonHor = new QHBoxLayout;
+    qButtonVer = new QVBoxLayout;
+    btn1 = new QPushButton;
+    btn2 = new QPushButton;
+    btn3 = new QPushButton;
     btn1 ->setText("1");
     btn2 ->setText("2");
     btn3 ->setText("3");
@@ -45,6 +45,14 @@ CentralWidget::CentralWidget(int a, QWidget *parent)
 
 CentralWidget::~CentralWidget()
 {
+    //delete m_parentCopy;
+    delete btn1;
+    delete btn2;
+    delete btn3;
+    delete qButtonHor;
+    delete qButtonVer;
+    delete m_textedit;
+    delete m_openimg;
     delete ui;
 }
 
@@ -120,7 +128,8 @@ void CentralWidget::dropEvent(QDropEvent *event)
         m_ImgInfor.sColorSpace = "RGB";
         qDebug() << "1";
         // 放在构造函数里信号传不过去
-        Form *openimg = new Form(this);
+        //Form *openimg = new Form(this);
+        openimg = new Form(this);
         m_openimg = openimg;
         // openimg = new Form(this);
         // FormPaint *openimg = new FormPaint(this);
@@ -178,7 +187,8 @@ void CentralWidget::OpenNew(cv::Mat image, INFOR_BASE::sImgInfor imginfor)
     emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
 
     // 放在构造函数里信号传不过去
-    Form *openimg = new Form(this);
+    // Form *openimg = new Form(this);
+    openimg = new Form(this);
     m_openimg = openimg;
     connect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
 

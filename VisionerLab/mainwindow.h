@@ -54,12 +54,13 @@ private slots:
     void ButtonShowManage(std::vector<std::string> ,std::vector<std::string>);
 private:
     Ui::MainWindow *ui;
-    QTextEdit *m_textedit;
-    Form *openimg;
+    // QTextEdit *m_textedit;
+    // Form *openimg;
     Ui::MainWindow *m_ui;
     INFOR_BASE::sImgInfor m_ImgInfor;
-    QListWidget *m_listWidget;
+    // QListWidget *m_listWidget;
     CentralWidget *c;
+    QWidget *m_parent;
 // 定义信号，可以与子窗口进行通信
 signals:
     void sendImg(cv::Mat, INFOR_BASE::sImgInfor);

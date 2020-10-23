@@ -11,16 +11,18 @@ DialogSlider::DialogSlider(QWidget *parent) :
     int nMax = 255;
     int nSingleStep = 10;
 
-    QHBoxLayout *qSliderHor=new QHBoxLayout;
-
+    // QHBoxLayout *qSliderHor = new QHBoxLayout;
+    qSliderHor = new QHBoxLayout;
     // 微调框
-    QSpinBox *pSpinBox = new QSpinBox(this);
+    // QSpinBox *pSpinBox = new QSpinBox(this);
+    pSpinBox = new QSpinBox(this);
     pSpinBox->setMinimum(nMin);  // 最小值
     pSpinBox->setMaximum(nMax);  // 最大值
     pSpinBox->setSingleStep(nSingleStep);  // 步长
 
     // 滑动条
-    QSlider *pSlider = new QSlider(this);
+    // QSlider *pSlider = new QSlider(this);
+    pSlider = new QSlider(this);
     pSlider->setOrientation(Qt::Horizontal);  // 水平方向
     pSlider->setMinimum(nMin);  // 最小值
     pSlider->setMaximum(nMax);  // 最大值
@@ -39,6 +41,10 @@ DialogSlider::DialogSlider(QWidget *parent) :
 
 DialogSlider::~DialogSlider()
 {
+    //delete m_parent;
+    delete qSliderHor;
+    delete pSpinBox;
+    delete pSlider;
     delete ui;
 }
 

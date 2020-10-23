@@ -30,9 +30,13 @@ Form::Form(QWidget *parent) :
 
 Form::~Form()
 {
+
+    delete pg;
+    delete pv;
+    delete m_dialogSlider;
     delete scrollArea;
     delete m_label;
-    delete m_parentCopy;
+    //delete m_parentCopy;
     delete ui;
 }
 void Form::Resize(cv::Mat mSrc, cv::Mat &mDst, double dScale)
@@ -206,8 +210,10 @@ void Form::getImgCenter(cv::Mat mImg, INFOR_BASE::sImgInfor imgInfor)
     pb=new QPushButton("放大");
     pb1=new QPushButton("缩小");
     pb2=new QPushButton("恢复");
-    QHBoxLayout *pg=new QHBoxLayout;
-    QVBoxLayout *pv=new QVBoxLayout;
+    // QHBoxLayout *pg=new QHBoxLayout;
+    // QVBoxLayout *pv=new QVBoxLayout;
+    pg = new QHBoxLayout;
+    pv = new QVBoxLayout;
     pg->addWidget(pb);
     pg->addWidget(pb1);
     pg->addWidget(pb2);
@@ -363,11 +369,11 @@ void Form::closeEvent(QCloseEvent *event) //根据不同的需求进行添加，
     }
     else if(ret == QMessageBox::Cancel)
     {
-        event->ignore();
+        // event->ignore();
     }
     else
     {
-        qApp->quit();//再退出系统，qApp是指向应用程序的全局指针
+        //qApp->quit();//再退出系统，qApp是指向应用程序的全局指针
     }
 }
 

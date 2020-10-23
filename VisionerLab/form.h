@@ -57,6 +57,9 @@ private:
     bool m_bCtrlPress;
     bool m_bModifyImg;
     DialogSlider *m_dialogSlider;
+
+    QHBoxLayout *pg;
+    QVBoxLayout *pv;
 private slots:
     // 槽函数
     // 接收主窗口的值

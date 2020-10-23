@@ -21,11 +21,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionManual, SIGNAL(triggered()), c,SLOT(ManualThresholdSlot()));
     initButton(ui);
     m_ui = ui;
+    m_parent = parent;
 }
 
 MainWindow::~MainWindow()
 {
+    if(c == NULL)
+    {
+        qDebug() << "cnull";
+    }
+    delete c;
     delete ui;
+    delete m_parent;
 }
 void MainWindow::getCentralWidget(CentralWidget *cenwidget)
 {

@@ -35,6 +35,13 @@ private:
     QWidget *m_parentCopy;
     QTextEdit *m_textedit;
     Form *m_openimg;
+
+    QHBoxLayout *qButtonHor;
+    QVBoxLayout *qButtonVer;
+    QPushButton *btn1;
+    QPushButton *btn2;
+    QPushButton *btn3;
+    Form *openimg;
 private slots:
     void getMouse(int nMouseX, int nMouseY, QColor color, int nChannel);
     void OpenNew(cv::Mat, INFOR_BASE::sImgInfor);
