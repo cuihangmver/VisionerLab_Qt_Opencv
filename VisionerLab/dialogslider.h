@@ -5,6 +5,11 @@
 #include <QSpinBox>
 #include <QSlider>
 #include <QBoxLayout>
+#include <QTextEdit>
+#include <QLabel>
+#include <QCheckBox>
+#include <QDialogButtonBox>
+#include <QPushButton>
 namespace Ui {
 class DialogSlider;
 }
@@ -22,9 +27,21 @@ private:
     Ui::DialogSlider *ui;
     QWidget *m_parent;
 
-    QHBoxLayout *qSliderHor;
+    QVBoxLayout *qButtonVer;
+    QHBoxLayout *qSliderHor1;
+    QHBoxLayout *qSliderHor2;
+    QHBoxLayout *qSliderHor3;
+    QHBoxLayout *qSliderHor4;
     QSpinBox *pSpinBox;
     QSlider *pSlider;
+    QLabel *pLabel1;
+    QLabel *pLabel2;
+    QLabel *pLabel3;
+    QLabel *pLabel4;
+    QCheckBox *pCheckBox1;
+    QCheckBox *pCheckBox2;
+    QPushButton *button1;
+    QPushButton *button2;
 signals:
     void sendManualThresholdChange(int );
 };

@@ -41,6 +41,8 @@ CentralWidget::CentralWidget(int a, QWidget *parent)
     this->setLayout(qButtonVer);
     this->resize(500,500);
     this->show();
+
+
 }
 
 CentralWidget::~CentralWidget()

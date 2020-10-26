@@ -84,7 +84,7 @@ void Form::DisplayMat(cv::Mat mimage, QLabel *label, double dScaling)
         QTime time2;
         time2.start();
         cv::resize(mimage,image,cv::Size(0,0),dScaling,dScaling,cv::INTER_AREA);
-        qDebug()<<"resize time= "<< time2.elapsed()/1000.0<<"s";
+
         // cv::imwrite("D:\\QTProj\\ImLabimage.png", image);
     //}
     QTime time3;
@@ -94,7 +94,6 @@ void Form::DisplayMat(cv::Mat mimage, QLabel *label, double dScaling)
     // Mat格式转QImage
     if(image.channels() == 3)
     {
-        qDebug() << "3 channel";
         // BGR转RGB
         img = QImage((const unsigned char*)(image.data),
                      image.cols,image.rows,image.cols*image.channels(),//rgb.cols*rgb.channels()可以替换为image.step
@@ -112,7 +111,6 @@ void Form::DisplayMat(cv::Mat mimage, QLabel *label, double dScaling)
     }
     else
     {
-        qDebug() << "1 channel";
         // 灰度图
         img = QImage((const unsigned char*)(image.data),
                      image.cols,image.rows,image.cols*image.channels(),
@@ -125,7 +123,7 @@ void Form::DisplayMat(cv::Mat mimage, QLabel *label, double dScaling)
         emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
         disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>)));
     }
-    qDebug()<<"connect time= "<< time3.elapsed()/1000.0<<"s";
+
     // QImage转QPixmap
     //QPixmap pixmap = QPixmap::fromImage(img);
     QPixmap fitpixmap = QPixmap::fromImage(img).scaled(img.width(), img.height(),Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -441,7 +439,6 @@ void Form::RGB2Gray()
 void Form::Gray2RGB()
 {
     m_bModifyImg = true;
-    qDebug() << "channels" << m_mImg.channels();
     if(1 == m_mImg.channels())
     {
         cv::cvtColor(m_mImg,m_mImg,CV_GRAY2RGB);
@@ -457,13 +454,18 @@ void Form::ManualThresholdSlot()
 
 void Form::ManualThresholdChangeSlot(int nValue)
 {
-    cv::Mat mDst;
-    QTime time1;
-    time1.start();
-    cv::threshold(m_mImg, mDst, nValue, 255, cv::THRESH_BINARY_INV);
-    qDebug()<<"threshold time= "<< time1.elapsed()/1000.0<<"s";
-    QTime time2;
-    time2.start();
-    DisplayMat(mDst, m_label, m_dScaling);
-    qDebug()<<"display time= "<< time2.elapsed()/1000.0<<"s";
+    cv::threshold(m_mImg, m_mTem, nValue, 255, cv::THRESH_BINARY_INV);
+    DisplayMat(m_mTem, m_label, m_dScaling);
+}
+
+void Form::OKSelectImg()
+{
+    m_mImg = m_mTem.clone();
+    DisplayMat(m_mImg, m_label, m_dScaling);
+
+}
+void Form::CancelSelectImg()
+{
+    DisplayMat(m_mImg, m_label, m_dScaling);
+
 }

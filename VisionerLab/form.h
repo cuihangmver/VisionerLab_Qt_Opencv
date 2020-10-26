@@ -50,6 +50,7 @@ private:
     QWidget *m_parentCopy;
     QLabel *m_label;
     cv::Mat m_mImg;
+    cv::Mat m_mTem;
     INFOR_BASE::sImgInfor m_imgInfor;
     double m_dScaling;
     // 滚动条
@@ -67,11 +68,15 @@ private slots:
     void getImgCenter(cv::Mat, INFOR_BASE::sImgInfor);
     void closeEventSlot();
     void closeEventSaveAsSlot();
+    // 接收子窗口数值
+    void OKSelectImg();
+    void CancelSelectImg();
     // 图像处理槽函数
     void RGB2Gray();
     void Gray2RGB();
     void ManualThresholdSlot();
     void ManualThresholdChangeSlot(int );
+
 signals:
     // 信号函数
     void sendMouse(int, int, QColor, int );
