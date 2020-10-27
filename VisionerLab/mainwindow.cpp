@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionsave, SIGNAL(triggered()), c,SLOT(closeEventSlot()));
     connect(ui->actionsave_2, SIGNAL(triggered()), c,SLOT(closeEventSaveAsSlot()));
     connect(ui->actionManual, SIGNAL(triggered()), c,SLOT(ManualThresholdSlot()));
+    connect(ui->actionOtus, SIGNAL(triggered()), c,SLOT(ThresholdOtusSlot()));
+    connect(ui->actionAdaptive, SIGNAL(triggered()), c,SLOT(ThresholdAdaptiveSlot()));
     initButton(ui);
     m_ui = ui;
     m_parent = parent;

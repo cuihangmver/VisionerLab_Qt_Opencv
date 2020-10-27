@@ -16,6 +16,7 @@
 #include <QFileDialog>
 #include "inforbase.h"
 #include "dialogslider.h"
+#include "adaptivedialog.h"
 #include <QTime>
 namespace Ui {
 class Form;
@@ -58,7 +59,7 @@ private:
     bool m_bCtrlPress;
     bool m_bModifyImg;
     DialogSlider *m_dialogSlider;
-
+    AdaptiveDialog *m_pAdaptiveDialog;
     QHBoxLayout *pg;
     QVBoxLayout *pv;
 private slots:
@@ -76,7 +77,9 @@ private slots:
     void Gray2RGB();
     void ManualThresholdSlot();
     void ManualThresholdChangeSlot(int );
-
+    void ThresholdOtusSlot();
+    void ThresholdAdaptiveSlot();
+    void ThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC);
 signals:
     // 信号函数
     void sendMouse(int, int, QColor, int );

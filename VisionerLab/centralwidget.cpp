@@ -89,11 +89,8 @@ void CentralWidget::dropEvent(QDropEvent *event)
     }
     QTextCodec *code = QTextCodec::codecForName("gb18030");
     std::string name = code->fromUnicode(fileName).data();//filename.toAscii().data()
-    qDebug() << fileName;
 
     cv::Mat image = cv::imread(name, -1);
-    qDebug() << "fileName" << image.channels();
-    // cv::imwrite("C:/Users/cuiha/Desktop/kk.png", image);
     if(!image.data)
     {
         QMessageBox msgBox;
@@ -103,7 +100,6 @@ void CentralWidget::dropEvent(QDropEvent *event)
     else
     {
         connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
-        qDebug() << "2";
         std::vector<std::string> vsShowButtons;
         std::vector<std::string> vsCloseButtons;
         std::string s1 = "actionRGB";
@@ -126,9 +122,7 @@ void CentralWidget::dropEvent(QDropEvent *event)
         m_ImgInfor.sPath = name;
         m_ImgInfor.nWidth = image.rows;
         m_ImgInfor.nHeight = image.cols;
-        qDebug() << "size"<< image.rows << image.cols;
         m_ImgInfor.sColorSpace = "RGB";
-        qDebug() << "1";
         // 放在构造函数里信号传不过去
         //Form *openimg = new Form(this);
         openimg = new Form(this);
@@ -137,11 +131,9 @@ void CentralWidget::dropEvent(QDropEvent *event)
         // FormPaint *openimg = new FormPaint(this);
         //connect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
         connect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
-        qDebug() << "2";
         cv::Mat rgb;
         if (3 == image.channels())
         {
-            qDebug() << "3 == image.channels()";
             cvtColor(image,rgb,CV_BGR2RGB);
             emit sendImgCenter(rgb, m_ImgInfor);
         }
@@ -149,11 +141,7 @@ void CentralWidget::dropEvent(QDropEvent *event)
         {
             emit sendImgCenter(image, m_ImgInfor);
         }
-        qDebug() << "2.5";
-
-        qDebug() << "3";
         openimg->show();
-        qDebug() << "4";
     }
 }
 void CentralWidget::dragMoveEvent(QDragMoveEvent *event)
@@ -215,14 +203,19 @@ void CentralWidget::getMouse(int nMouseX, int nMouseY, QColor color, int nChanne
     QString sRed = QString::number(color.red());
     QString sGreen = QString::number(color.green());
     QString sBlue = QString::number(color.blue());
+    QString sAlpha = QString::number(color.alpha());
     QString sShow;
     if(1 == nChannel)
     {
         sShow = "(" + sCorX + ", " + sCorY + ") = " + "[" + sRed + "]" + "\r\n";
     }
-    else
+    else if(3 == nChannel)
     {
         sShow = "(" + sCorX + ", " + sCorY + ") = " + "[" + sRed + ", " + sGreen + ", " + sBlue + "]" + "\r\n";
+    }
+    else if(4 == nChannel)
+    {
+        sShow = "(" + sCorX + ", " + sCorY + ") = " + "[" + sRed + ", " + sGreen + ", " + sBlue + ", " + sAlpha + "]" + "\r\n";
     }
 
     // 插入textedit显示
@@ -254,6 +247,16 @@ void CentralWidget::ManualThresholdSlot()
 {
     connect(this, SIGNAL(sendManualThresholdSlot()), m_openimg, SLOT(ManualThresholdSlot()));
     emit sendManualThresholdSlot(); 
+}
+void CentralWidget::ThresholdOtusSlot()
+{
+    connect(this, SIGNAL(sendThresholdOtusSlot()), m_openimg, SLOT(ThresholdOtusSlot()));
+    emit sendThresholdOtusSlot();
+}
+void CentralWidget::ThresholdAdaptiveSlot()
+{
+    connect(this, SIGNAL(sendThresholdAdaptiveSlot()), m_openimg, SLOT(ThresholdAdaptiveSlot()));
+    emit sendThresholdAdaptiveSlot();
 }
 
 void CentralWidget::ButtonShowManageCloseGraySlot(std::vector<std::string> vsShowButtons, std::vector<std::string> vsCloseButtons)

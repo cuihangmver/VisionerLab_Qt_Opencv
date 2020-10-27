@@ -61,7 +61,6 @@ void Form::Resize(cv::Mat mSrc, cv::Mat &mDst, double dScale)
                 for(int j = 0; j < dScale; j++)
                 {
                     mDst.at<cv::Vec3b>(nHeight * nScale + i, nWidth * nScale + j)[0] = x;
-                    //qDebug() << "resize2.6";
                     mDst.at<cv::Vec3b>(nHeight * nScale + i, nWidth * nScale + j)[1] = y;
                     mDst.at<cv::Vec3b>(nHeight * nScale + i, nWidth * nScale + j)[2] = z;
                 }
@@ -81,18 +80,30 @@ void Form::DisplayMat(cv::Mat mimage, QLabel *label, double dScaling)
     //}
     //else
     //{
-        QTime time2;
-        time2.start();
         cv::resize(mimage,image,cv::Size(0,0),dScaling,dScaling,cv::INTER_AREA);
-
-        // cv::imwrite("D:\\QTProj\\ImLabimage.png", image);
     //}
-    QTime time3;
-    time3.start();
-
     QImage img;
     // Mat格式转QImage
-    if(image.channels() == 3)
+    if(4 == image.channels())
+    {
+        qDebug() << "channels4";
+        // BGRA转RGBA
+        //img = QImage((const unsigned char*)(image.data),
+        img = QImage(image.data,
+                     image.cols,image.rows,image.step,//rgb.cols*rgb.channels()可以替换为image.step
+                     QImage::Format_RGB32);
+                     //QImage::Format_Grayscale8);
+qDebug() << "channels5";
+        connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>)));
+        std::vector<std::string> vsShowButtons;
+        std::vector<std::string> vsCloseButtons;
+        std::string s1 = "actionManual";
+        vsCloseButtons.push_back(s1);
+        emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
+        disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>)));;
+        /**/
+    }
+    else if(3 == image.channels())
     {
         // BGR转RGB
         img = QImage((const unsigned char*)(image.data),
@@ -109,7 +120,7 @@ void Form::DisplayMat(cv::Mat mimage, QLabel *label, double dScaling)
         disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>)));;
         /**/
     }
-    else
+    else if(1 == image.channels())
     {
         // 灰度图
         img = QImage((const unsigned char*)(image.data),
@@ -123,13 +134,17 @@ void Form::DisplayMat(cv::Mat mimage, QLabel *label, double dScaling)
         emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
         disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>)));
     }
-
+qDebug() << "channels6";
     // QImage转QPixmap
-    //QPixmap pixmap = QPixmap::fromImage(img);
-    QPixmap fitpixmap = QPixmap::fromImage(img).scaled(img.width(), img.height(),Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    //QPixmap fitpixmap = QPixmap::fromImage(img).scaled(img.width(), img.height(),Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    // 需要使用copy()
+    QPixmap fitpixmap = QPixmap::fromImage(img.copy());
+qDebug() << "channels7";
     label->setPixmap(fitpixmap);
+    qDebug() << "channels8";
     // QLabel居中
     label->setAlignment(Qt::AlignCenter);
+    qDebug() << "channels9";
 }
 
 void Form::DisplayMatPainter(cv::Mat image, QLabel *label, double dScaling)
@@ -156,7 +171,6 @@ void Form::DisplayMatPainter(cv::Mat image, QLabel *label, double dScaling)
 
 void Form::getImg(cv::Mat mImg, INFOR_BASE::sImgInfor imgInfor)
 {
-    qDebug() << "form1";
     m_mImg = mImg.clone();
     m_imgInfor = imgInfor;
     //layout布局
@@ -232,7 +246,6 @@ void Form::getImgCenter(cv::Mat mImg, INFOR_BASE::sImgInfor imgInfor)
     // 设置qlabel相关
     m_label->setStyleSheet("border:1px solid black;");
     // 设置鼠标移动相应
-    qDebug() << "BeforeDis";
     DisplayMat(mImg, m_label, m_dScaling);
 
     // 这两个控件都要相应鼠标事件
@@ -409,7 +422,6 @@ void Form::doFileSave()
 {
     QString dirPath = QFileDialog::getSaveFileName(NULL, QStringLiteral("ImageSaveAs"), "good.png", QString(tr("Images (*.png *.bmp *.jpg  *.gif *.jpeg)")),
                                                        Q_NULLPTR, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    qDebug() << dirPath;
     //如果选择的路径无效，则不保存
     if (!dirPath.isEmpty())
     {
@@ -433,6 +445,10 @@ void Form::RGB2Gray()
     {
         cv::cvtColor(m_mImg,m_mImg,CV_RGB2GRAY);
     }
+    else if(4 == m_mImg.channels())
+    {
+        cv::cvtColor(m_mImg,m_mImg,CV_RGBA2GRAY);
+    }
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 
@@ -451,18 +467,34 @@ void Form::ManualThresholdSlot()
     m_dialogSlider = new DialogSlider(this);
     m_dialogSlider->show();
 }
-
 void Form::ManualThresholdChangeSlot(int nValue)
 {
     cv::threshold(m_mImg, m_mTem, nValue, 255, cv::THRESH_BINARY_INV);
     DisplayMat(m_mTem, m_label, m_dScaling);
 }
 
+void Form::ThresholdOtusSlot()
+{
+    cv::threshold(m_mImg, m_mImg, 0, 255, CV_THRESH_OTSU);
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+
+void Form::ThresholdAdaptiveSlot()
+{
+    m_pAdaptiveDialog = new AdaptiveDialog(this);
+    m_pAdaptiveDialog->show();
+}
+
+void Form::ThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC)
+{
+    cv::adaptiveThreshold(m_mImg, m_mImg, dMaxValue, nAdaptiveMethod, nThresholdType, nBlockSize, dC);
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+
 void Form::OKSelectImg()
 {
     m_mImg = m_mTem.clone();
     DisplayMat(m_mImg, m_label, m_dScaling);
-
 }
 void Form::CancelSelectImg()
 {

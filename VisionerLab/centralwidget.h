@@ -50,6 +50,8 @@ private slots:
     void closeEventSlot();
     void closeEventSaveAsSlot();
     void ManualThresholdSlot();
+    void ThresholdOtusSlot();
+    void ThresholdAdaptiveSlot();
     void ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>);
     void ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>);
 // 定义信号，可以与子窗口进行通信
@@ -61,6 +63,8 @@ signals:
     void sendcloseEventSlot();
     void sendcloseEventSaveAsSlot();
     void sendManualThresholdSlot();
+    void sendThresholdOtusSlot();
+    void sendThresholdAdaptiveSlot();
 };
 
 #endif // CENTRALWIDGET_H
