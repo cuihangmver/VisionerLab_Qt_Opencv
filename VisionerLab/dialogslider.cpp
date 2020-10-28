@@ -63,7 +63,7 @@ DialogSlider::DialogSlider(QWidget *parent) :
     button1->setText("确认");
     button2->setText("取消");
     */
-    QDialogButtonBox *button = new QDialogButtonBox(parent);
+    button = new QDialogButtonBox(parent);
     button->addButton( "OK", QDialogButtonBox::YesRole);
     button->addButton( "NO", QDialogButtonBox::NoRole);
     connect(button, SIGNAL(accepted()), parent, SLOT(OKSelectImg()));
@@ -81,7 +81,7 @@ DialogSlider::DialogSlider(QWidget *parent) :
 
 DialogSlider::~DialogSlider()
 {
-    //delete m_parent;
+    delete button;
     delete button1;
     delete button2;
     delete pLabel1;

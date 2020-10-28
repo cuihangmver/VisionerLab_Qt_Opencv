@@ -34,7 +34,8 @@ SOURCES += \
     form.cpp \
     inforbase.cpp \
     centralwidget.cpp \
-    dialogslider.cpp
+    dialogslider.cpp \
+    adaptivedialog.cpp
 
 # opencv3.4.0
 INCLUDEPATH += E:/ProfessionalSoftware/QT/opencv/opencv/build/include \
@@ -47,13 +48,15 @@ HEADERS += \
     form.h \
     inforbase.h \
     centralwidget.h \
-    dialogslider.h
+    dialogslider.h \
+    adaptivedialog.h
 
 FORMS += \
         mainwindow.ui \
     form.ui \
     centralwidget.ui \
-    dialogslider.ui
+    dialogslider.ui \
+    adaptivedialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

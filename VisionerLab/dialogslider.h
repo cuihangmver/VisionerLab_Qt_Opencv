@@ -42,6 +42,7 @@ private:
     QCheckBox *pCheckBox2;
     QPushButton *button1;
     QPushButton *button2;
+    QDialogButtonBox *button;
 signals:
     void sendManualThresholdChange(int );
 };

@@ -72,6 +72,8 @@
       <string>Threshold</string>
      </property>
      <addaction name="actionManual"/>
+     <addaction name="actionOtus"/>
+     <addaction name="actionAdaptive"/>
     </widget>
     <addaction name="actionSize"/>
     <addaction name="actionGeometric"/>
@@ -208,6 +210,16 @@
   <action name="actionManual">
    <property name="text">
     <string>Manual</string>
+   </property>
+  </action>
+  <action name="actionOtus">
+   <property name="text">
+    <string>Otus</string>
+   </property>
+  </action>
+  <action name="actionAdaptive">
+   <property name="text">
+    <string>Adaptive</string>
    </property>
   </action>
  </widget>
