@@ -43,6 +43,8 @@ private:
 
     QVBoxLayout *qButtonVer;
     QDialogButtonBox *button;
+
+    QPushButton *pb;
 private:
     double m_dMaxValue;
     int m_nAdaptiveMethod;
@@ -58,9 +60,10 @@ private slots:
     void SetC(QString sC);
     void OKSelectAdaptive();
     void CancelSelectAdaptive();
+    void PreviewSelectAdaptive();
 signals:
     void ThresholdAdaptiveChangeSend(double , int , int , int , double );
-
+    void PreviewThresholdAdaptiveChangeSend(double , int , int , int , double );
 };
 
 #endif // ADAPTIVEDIALOG_H

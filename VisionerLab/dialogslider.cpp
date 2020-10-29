@@ -11,20 +11,17 @@ DialogSlider::DialogSlider(QWidget *parent) :
     int nMax = 255;
     int nSingleStep = 10;
 
-    // QHBoxLayout *qSliderHor = new QHBoxLayout;
     qButtonVer = new QVBoxLayout;
     qSliderHor1 = new QHBoxLayout;
     pLabel1 = new QLabel(this);
     pLabel1->setText("Level");
     // 微调框
-    // QSpinBox *pSpinBox = new QSpinBox(this);
     pSpinBox = new QSpinBox(this);
     pSpinBox->setMinimum(nMin);  // 最小值
     pSpinBox->setMaximum(nMax);  // 最大值
     pSpinBox->setSingleStep(nSingleStep);  // 步长
 
     // 滑动条
-    // QSlider *pSlider = new QSlider(this);
     pSlider = new QSlider(this);
     pSlider->setOrientation(Qt::Horizontal);  // 水平方向
     pSlider->setMinimum(nMin);  // 最小值
@@ -33,7 +30,6 @@ DialogSlider::DialogSlider(QWidget *parent) :
     qSliderHor1->addWidget(pLabel1);
     qSliderHor1->addWidget(pSpinBox);
     qSliderHor1->addWidget(pSlider);
-    //this->setLayout(qSliderHor1);
     // 连接信号槽（相互改变）
     connect(pSpinBox, SIGNAL(valueChanged(int)), pSlider, SLOT(setValue(int)));
     connect(pSlider, SIGNAL(valueChanged(int)), pSpinBox, SLOT(setValue(int)));
@@ -57,12 +53,7 @@ DialogSlider::DialogSlider(QWidget *parent) :
 
 
     qSliderHor4 = new QHBoxLayout;
-    /*
-    button1 = new QPushButton;
-    button2 = new QPushButton;
-    button1->setText("确认");
-    button2->setText("取消");
-    */
+
     button = new QDialogButtonBox(parent);
     button->addButton( "OK", QDialogButtonBox::YesRole);
     button->addButton( "NO", QDialogButtonBox::NoRole);
@@ -70,7 +61,6 @@ DialogSlider::DialogSlider(QWidget *parent) :
     connect(button, SIGNAL(rejected()), parent, SLOT(CancelSelectImg()));
 
     qSliderHor4->addWidget(button);
-    //qSliderHor4->addWidget(button2);
 
     qButtonVer->addLayout(qSliderHor1);
     qButtonVer->addLayout(qSliderHor2);
@@ -81,21 +71,78 @@ DialogSlider::DialogSlider(QWidget *parent) :
 
 DialogSlider::~DialogSlider()
 {
-    delete button;
-    delete button1;
-    delete button2;
-    delete pLabel1;
-    delete pLabel2;
-    delete pLabel3;
+    if(nullptr != button)
+    {
+        delete button;
+        button = nullptr;
+    }
+    if(nullptr != button1)
+    {
+        delete button1;
+        button1 = nullptr;
+    }
+    if(nullptr != button2)
+    {
+        delete button2;
+        button2 = nullptr;
+    }
+    if(nullptr != pLabel1)
+    {
+        delete pLabel1;
+        pLabel1 = nullptr;
+    }
+    if(nullptr != pLabel2)
+    {
+        delete pLabel2;
+        pLabel2 = nullptr;
+    }
+    if(nullptr != pLabel3)
+    {
+        delete pLabel3;
+        pLabel3 = nullptr;
+    }
 
-    delete qSliderHor1;
-    delete qSliderHor2;
-    delete qSliderHor3;
-    delete qSliderHor4;
-    delete qButtonVer;
-    delete pSpinBox;
-    delete pSlider;
-    delete ui;
+    if(nullptr != qSliderHor1)
+    {
+        delete qSliderHor1;
+        qSliderHor1 = nullptr;
+    }
+    if(nullptr != qSliderHor2)
+    {
+        delete qSliderHor2;
+        qSliderHor2 = nullptr;
+    }
+    if(nullptr != qSliderHor3)
+    {
+        delete qSliderHor3;
+        qSliderHor3 = nullptr;
+    }
+    if(nullptr != qSliderHor4)
+    {
+        delete qSliderHor4;
+        qSliderHor4 = nullptr;
+    }
+
+    if(nullptr != qButtonVer)
+    {
+        delete qButtonVer;
+        qButtonVer = nullptr;
+    }
+    if(nullptr != pSpinBox)
+    {
+        delete pSpinBox;
+        pSpinBox = nullptr;
+    }
+    if(nullptr != pSlider)
+    {
+        delete pSlider;
+        pSlider = nullptr;
+    }
+    if(nullptr != ui)
+    {
+        delete ui;
+        ui = nullptr;
+    }
 }
 
 void DialogSlider::ManualThresholdChangeSlot(int nValue)

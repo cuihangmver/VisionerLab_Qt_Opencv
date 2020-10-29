@@ -7,8 +7,6 @@ CentralWidget::CentralWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setAcceptDrops(true);
-
-
 }
 CentralWidget::CentralWidget(int a, QWidget *parent)
 {
@@ -21,9 +19,9 @@ CentralWidget::CentralWidget(int a, QWidget *parent)
     btn1 = new QPushButton;
     btn2 = new QPushButton;
     btn3 = new QPushButton;
-    btn1 ->setText("1");
-    btn2 ->setText("2");
-    btn3 ->setText("3");
+    btn1 ->setText("back");
+    btn2 ->setText("ahead");
+    btn3 ->setText("histogram");
     qButtonHor->addWidget(btn1);
     qButtonHor->addWidget(btn2);
     qButtonHor->addWidget(btn3);
@@ -41,21 +39,50 @@ CentralWidget::CentralWidget(int a, QWidget *parent)
     this->setLayout(qButtonVer);
     this->resize(500,500);
     this->show();
-
-
 }
 
 CentralWidget::~CentralWidget()
 {
-    //delete m_parentCopy;
-    delete btn1;
-    delete btn2;
-    delete btn3;
-    delete qButtonHor;
-    delete qButtonVer;
-    delete m_textedit;
-    delete m_openimg;
-    delete ui;
+    if(nullptr != btn1)
+    {
+        delete btn1;
+        btn1 = nullptr;
+    }
+    if(nullptr != btn2)
+    {
+        delete btn2;
+        btn2 = nullptr;
+    }
+    if(nullptr != btn3)
+    {
+        delete btn3;
+        btn3 = nullptr;
+    }
+    if(nullptr != qButtonHor)
+    {
+        delete qButtonHor;
+        qButtonHor = nullptr;
+    }
+    if(nullptr != qButtonVer)
+    {
+        delete qButtonVer;
+        qButtonVer = nullptr;
+    }
+    if(nullptr != m_textedit)
+    {
+        delete m_textedit;
+        m_textedit = nullptr;
+    }
+    if(nullptr != m_openimg)
+    {
+        delete m_openimg;
+        m_openimg = nullptr;
+    }
+    if(nullptr != ui)
+    {
+        delete ui;
+        ui = nullptr;
+    }
 }
 
 void CentralWidget::dragEnterEvent(QDragEnterEvent *event)
@@ -78,7 +105,6 @@ void CentralWidget::dropEvent(QDropEvent *event)
     {
         return;
     }
-
     QList<QUrl> urlList = mimeData->urls();
 
     //如果同时拖入了多个资源，只选择第一个
@@ -99,6 +125,7 @@ void CentralWidget::dropEvent(QDropEvent *event)
     }
     else
     {
+        // 将灰色按钮打开
         connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
         std::vector<std::string> vsShowButtons;
         std::vector<std::string> vsCloseButtons;
@@ -117,19 +144,15 @@ void CentralWidget::dropEvent(QDropEvent *event)
         vsShowButtons.push_back(s6);
         vsShowButtons.push_back(s7);
         emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
-
-        // INFOR_BASE::sImgInfor imgInfor;
+        disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
         m_ImgInfor.sPath = name;
         m_ImgInfor.nWidth = image.rows;
         m_ImgInfor.nHeight = image.cols;
         m_ImgInfor.sColorSpace = "RGB";
-        // 放在构造函数里信号传不过去
-        //Form *openimg = new Form(this);
+        // 将显示图像窗口打开
+        // 关闭窗口应将内存释放！！！！
         openimg = new Form(this);
         m_openimg = openimg;
-        // openimg = new Form(this);
-        // FormPaint *openimg = new FormPaint(this);
-        //connect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
         connect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
         cv::Mat rgb;
         if (3 == image.channels())
@@ -141,6 +164,7 @@ void CentralWidget::dropEvent(QDropEvent *event)
         {
             emit sendImgCenter(image, m_ImgInfor);
         }
+        disconnect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
         openimg->show();
     }
 }
@@ -155,9 +179,7 @@ void CentralWidget::OpenNew(cv::Mat image, INFOR_BASE::sImgInfor imginfor)
     m_ImgInfor.nWidth = image.rows;
     m_ImgInfor.nHeight = image.cols;
     m_ImgInfor.sColorSpace = "RGB";
-
     connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
-
     std::vector<std::string> vsShowButtons;
     std::vector<std::string> vsCloseButtons;
     std::string s1 = "actionRGB";
@@ -175,13 +197,11 @@ void CentralWidget::OpenNew(cv::Mat image, INFOR_BASE::sImgInfor imginfor)
     vsShowButtons.push_back(s6);
     vsShowButtons.push_back(s7);
     emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
-
-    // 放在构造函数里信号传不过去
-    // Form *openimg = new Form(this);
+    disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
+    // 打开显示图像窗口
     openimg = new Form(this);
     m_openimg = openimg;
     connect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
-
     cv::Mat rgb;
     if (3 == image.channels())
     {
@@ -192,10 +212,11 @@ void CentralWidget::OpenNew(cv::Mat image, INFOR_BASE::sImgInfor imginfor)
     {
         emit sendImgCenter(image, m_ImgInfor);
     }
-
+    disconnect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
     openimg->show();
 }
 
+// 得到鼠标点击坐标及像素值并显示
 void CentralWidget::getMouse(int nMouseX, int nMouseY, QColor color, int nChannel)
 {
     QString sCorX = QString::number(nMouseX);

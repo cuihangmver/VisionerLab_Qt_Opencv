@@ -9,8 +9,6 @@ MainWindow::MainWindow(QWidget *parent) :
     // 主界面对象
     c = new CentralWidget(1, this);
     setCentralWidget(c);
-
-    // openimg = new Form(this);
     // button的信号是clicked(),QAction的信号是triggered()
     QObject::connect(ui->actionNew, SIGNAL(triggered()), this,SLOT(OpenNew()));
     // 图像处理槽函数
@@ -28,13 +26,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    if(c == NULL)
+    if(nullptr != c)
     {
-        qDebug() << "cnull";
+        delete c;
+        c = nullptr;
     }
-    delete c;
-    delete ui;
-    delete m_parent;
+    if(nullptr != m_parent)
+    {
+        delete m_parent;
+        m_parent = nullptr;
+    }
+    if(nullptr != ui)
+    {
+        delete ui;
+        ui = nullptr;
+    }
 }
 void MainWindow::getCentralWidget(CentralWidget *cenwidget)
 {
@@ -42,8 +48,6 @@ void MainWindow::getCentralWidget(CentralWidget *cenwidget)
 }
 void MainWindow::initButton(Ui::MainWindow *ui)
 {
-    // ui->actionNew->setDisabled(true);
-    // ui->actionOpen->setDisabled(true);
     ui->actionRGB->setDisabled(true);
     ui->actionGray->setDisabled(true);
     ui->actionMap->setDisabled(true);
@@ -55,8 +59,6 @@ void MainWindow::initButton(Ui::MainWindow *ui)
 
 void MainWindow::openButton(Ui::MainWindow *ui)
 {
-    // ui->actionNew->setDisabled(true);
-    // ui->actionOpen->setDisabled(true);
     ui->actionRGB->setDisabled(false);
     ui->actionGray->setDisabled(false);
     ui->actionMap->setDisabled(false);
@@ -81,13 +83,13 @@ void MainWindow::OpenNew()
     }
     else
     {
-        // openButton(m_ui);
         m_ImgInfor.sPath = name;
         m_ImgInfor.nWidth = image.rows;
         m_ImgInfor.nHeight = image.cols;
         m_ImgInfor.sColorSpace = "RGB";
         connect(this,SIGNAL(sendImg(cv::Mat, INFOR_BASE::sImgInfor)),c,SLOT(OpenNew(cv::Mat, INFOR_BASE::sImgInfor)));
         emit sendImg(image, m_ImgInfor);
+        disconnect(this,SIGNAL(sendImg(cv::Mat, INFOR_BASE::sImgInfor)),c,SLOT(OpenNew(cv::Mat, INFOR_BASE::sImgInfor)));
     }
 }
 
@@ -103,40 +105,32 @@ void MainWindow::ButtonShowManage(std::vector<std::string> vsShowButtons, std::v
     for(int i = 0; i < vsShowButtons.size(); i++)
     {
         QString qstr2 = QString::fromStdString(vsShowButtons[i]);
-
         if(s1 == vsShowButtons[i])
         {
-
             ui->actionRGB->setDisabled(false);
         }
         else if(s2 == vsShowButtons[i])
         {
-
             ui->actionGray->setDisabled(false);
         }
         else if(s3 == vsShowButtons[i])
         {
-
             ui->actionMap->setDisabled(false);
         }
         else if(s4 == vsShowButtons[i])
         {
-
             ui->actionsave->setDisabled(false);
         }
         else if(s5 == vsShowButtons[i])
         {
-
             ui->actionsave_2->setDisabled(false);
         }
         else if(s6 == vsShowButtons[i])
         {
-
             ui->actionBinary->setDisabled(false);
         }
         else if(s7 == vsShowButtons[i])
         {
-
             ui->actionManual->setDisabled(false);
         }
     }
@@ -218,7 +212,7 @@ void MainWindow::on_actionOpen_triggered()
     QString fileNameImg = QFileDialog::getOpenFileName(this, tr("Open Image"),"./",tr("Image File (*.jpg *.png *.bmp)"));
     QTextCodec *code = QTextCodec::codecForName("gb18030");
     std::string name = code->fromUnicode(fileNameImg).data();//filename.toAscii().data()
-    cv::Mat image = cv::imread(name);
+    cv::Mat image = cv::imread(name, -1);
     if(!image.data)
     {
         QMessageBox msgBox;
@@ -227,16 +221,12 @@ void MainWindow::on_actionOpen_triggered()
     }
     else
     {
-        //INFOR_BASE::sImgInfor imgInfor;
         m_ImgInfor.sPath = name;
         m_ImgInfor.nWidth = image.rows;
         m_ImgInfor.nHeight = image.cols;
         m_ImgInfor.sColorSpace = "RGB";
-        //dialog = new Dialog(this);
-        //dialog->setModal(false);
-        //QObject::connect(this,SIGNAL(sendImg(cv::Mat, INFOR_BASE::sImgInfor)),dialog,SLOT(getImg(cv::Mat, INFOR_BASE::sImgInfor)));
-        //emit sendImg(image, m_ImgInfor);
-        //dialog->show();
+        connect(this,SIGNAL(sendImg(cv::Mat, INFOR_BASE::sImgInfor)),c,SLOT(OpenNew(cv::Mat, INFOR_BASE::sImgInfor)));
+        emit sendImg(image, m_ImgInfor);
+        disconnect(this,SIGNAL(sendImg(cv::Mat, INFOR_BASE::sImgInfor)),c,SLOT(OpenNew(cv::Mat, INFOR_BASE::sImgInfor)));
     }
 }
-

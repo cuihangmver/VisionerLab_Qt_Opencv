@@ -33,10 +33,8 @@ public:
     ~Form();
     // 自定义函数
     void DisplayMat(cv::Mat mimage, QLabel *label, double dScaling);
-    void DisplayMatPainter(cv::Mat image, QLabel *label, double dScaling);
     void Resize(cv::Mat mSrc, cv::Mat &mDst, double dScale);
     void doFileSave();
-
 protected:
     // 事件相应
     void mousePressEvent(QMouseEvent * event);
@@ -45,7 +43,6 @@ protected:
     void keyPressEvent(QKeyEvent *ev);
     void keyReleaseEvent(QKeyEvent *ev);
     void closeEvent(QCloseEvent *event);
-
 private:
     Ui::Form *ui;
     QWidget *m_parentCopy;
@@ -62,10 +59,11 @@ private:
     AdaptiveDialog *m_pAdaptiveDialog;
     QHBoxLayout *pg;
     QVBoxLayout *pv;
+    QPushButton *pb,*pb1,*pb2;
 private slots:
     // 槽函数
     // 接收主窗口的值
-    void getImg(cv::Mat, INFOR_BASE::sImgInfor);
+    // void getImg(cv::Mat, INFOR_BASE::sImgInfor);
     void getImgCenter(cv::Mat, INFOR_BASE::sImgInfor);
     void closeEventSlot();
     void closeEventSaveAsSlot();
@@ -80,6 +78,7 @@ private slots:
     void ThresholdOtusSlot();
     void ThresholdAdaptiveSlot();
     void ThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC);
+    void PreviewThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC);
 signals:
     // 信号函数
     void sendMouse(int, int, QColor, int );
