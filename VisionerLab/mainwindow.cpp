@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // button的信号是clicked(),QAction的信号是triggered()
     QObject::connect(ui->actionNew, SIGNAL(triggered()), this,SLOT(OpenNew()));
     // 图像处理槽函数
+    // 在此添加图像处理信号...
     connect(ui->actionGray, SIGNAL(triggered()), c, SLOT(RGB2Gray()));
     connect(ui->actionRGB, SIGNAL(triggered()), c, SLOT(Gray2RGB()));
     connect(ui->actionsave, SIGNAL(triggered()), c,SLOT(closeEventSlot()));
@@ -19,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionManual, SIGNAL(triggered()), c,SLOT(ManualThresholdSlot()));
     connect(ui->actionOtus, SIGNAL(triggered()), c,SLOT(ThresholdOtusSlot()));
     connect(ui->actionAdaptive, SIGNAL(triggered()), c,SLOT(ThresholdAdaptiveSlot()));
+    connect(ui->actionEqualization, SIGNAL(triggered()), c,SLOT(EqualizationSlot()));
     initButton(ui);
     m_ui = ui;
     m_parent = parent;
@@ -55,6 +57,11 @@ void MainWindow::initButton(Ui::MainWindow *ui)
     ui->actionsave_2->setDisabled(true);
     ui->actionBinary->setDisabled(true);
     ui->actionManual->setDisabled(true);
+    ui->actionOtus->setDisabled(true);
+    ui->actionAdaptive->setDisabled(true);
+    ui->actionEqualization->setDisabled(true);
+    ui->actionExpansion->setDisabled(true);
+
 }
 
 void MainWindow::openButton(Ui::MainWindow *ui)
@@ -102,6 +109,10 @@ void MainWindow::ButtonShowManage(std::vector<std::string> vsShowButtons, std::v
     std::string s5 = "actionsave_2";
     std::string s6 = "actionBinary";
     std::string s7 = "actionManual";
+    std::string s8 = "actionOtus";
+    std::string s9 = "actionAdaptive";
+    qDebug() << vsShowButtons.size();
+
     for(int i = 0; i < vsShowButtons.size(); i++)
     {
         QString qstr2 = QString::fromStdString(vsShowButtons[i]);
@@ -133,6 +144,14 @@ void MainWindow::ButtonShowManage(std::vector<std::string> vsShowButtons, std::v
         {
             ui->actionManual->setDisabled(false);
         }
+        else if(s8 == vsShowButtons[i])
+        {
+            ui->actionOtus->setDisabled(false);
+        }
+        else if(s9 == vsShowButtons[i])
+        {
+            ui->actionAdaptive->setDisabled(false);
+        }
     }
 
     for(int i = 0; i < vsCloseButtons.size(); i++)
@@ -162,6 +181,14 @@ void MainWindow::ButtonShowManage(std::vector<std::string> vsShowButtons, std::v
             ui->actionBinary->setDisabled(true);
         }
         else if(s7 == vsCloseButtons[i])
+        {
+            ui->actionManual->setDisabled(true);
+        }
+        else if(s8 == vsCloseButtons[i])
+        {
+            ui->actionManual->setDisabled(true);
+        }
+        else if(s9 == vsCloseButtons[i])
         {
             ui->actionManual->setDisabled(true);
         }

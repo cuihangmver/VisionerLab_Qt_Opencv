@@ -33,6 +33,10 @@ public:
     ~Form();
     // 自定义函数
     void DisplayMat(cv::Mat mimage, QLabel *label, double dScaling);
+    void Display4DepthMat(cv::Mat image, QImage &img);
+    void Display3DepthMat(cv::Mat image, QImage &img);
+    void Display2DepthMat(cv::Mat image, QImage &img);
+    void Display1DepthMat(cv::Mat image, QImage &img);
     void Resize(cv::Mat mSrc, cv::Mat &mDst, double dScale);
     void doFileSave();
 protected:
@@ -77,11 +81,13 @@ private slots:
     void ManualThresholdChangeSlot(int );
     void ThresholdOtusSlot();
     void ThresholdAdaptiveSlot();
+    void EqualizationSlot();
     void ThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC);
     void PreviewThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC);
 signals:
     // 信号函数
     void sendMouse(int, int, QColor, int );
+    void sendMouseDepth(int, int, ushort, int );
     void sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>);
 };
 

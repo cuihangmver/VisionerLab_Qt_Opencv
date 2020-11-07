@@ -44,6 +44,7 @@ private:
     Form *openimg;
 private slots:
     void getMouse(int nMouseX, int nMouseY, QColor color, int nChannel);
+    void getMouseDepth(int nMouseX, int nMouseY, ushort uPixel, int nChannel);
     void OpenNew(cv::Mat, INFOR_BASE::sImgInfor);
     void RGB2Gray();
     void Gray2RGB();
@@ -52,6 +53,7 @@ private slots:
     void ManualThresholdSlot();
     void ThresholdOtusSlot();
     void ThresholdAdaptiveSlot();
+    void EqualizationSlot();
     void ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>);
     void ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>);
 // 定义信号，可以与子窗口进行通信
@@ -65,6 +67,7 @@ signals:
     void sendManualThresholdSlot();
     void sendThresholdOtusSlot();
     void sendThresholdAdaptiveSlot();
+    void sendEqualizationSlot();
 };
 
 #endif // CENTRALWIDGET_H

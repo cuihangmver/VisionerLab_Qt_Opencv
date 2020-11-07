@@ -75,11 +75,19 @@
      <addaction name="actionOtus"/>
      <addaction name="actionAdaptive"/>
     </widget>
+    <widget class="QMenu" name="menuHistogram">
+     <property name="title">
+      <string>Histogram</string>
+     </property>
+     <addaction name="actionEqualization"/>
+     <addaction name="actionExpansion"/>
+    </widget>
     <addaction name="actionSize"/>
     <addaction name="actionGeometric"/>
     <addaction name="actionQuantize"/>
     <addaction name="actionColor_Compon"/>
     <addaction name="menuThreshold"/>
+    <addaction name="menuHistogram"/>
    </widget>
    <widget class="QMenu" name="menuAnalyze">
     <property name="title">
@@ -220,6 +228,16 @@
   <action name="actionAdaptive">
    <property name="text">
     <string>Adaptive</string>
+   </property>
+  </action>
+  <action name="actionEqualization">
+   <property name="text">
+    <string>Equalization</string>
+   </property>
+  </action>
+  <action name="actionExpansion">
+   <property name="text">
+    <string>Expansion</string>
    </property>
   </action>
  </widget>

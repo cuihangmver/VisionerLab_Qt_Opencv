@@ -145,23 +145,46 @@ void CentralWidget::dropEvent(QDropEvent *event)
         vsShowButtons.push_back(s7);
         emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
         disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
-        m_ImgInfor.sPath = name;
-        m_ImgInfor.nWidth = image.rows;
-        m_ImgInfor.nHeight = image.cols;
-        m_ImgInfor.sColorSpace = "RGB";
+
         // 将显示图像窗口打开
         // 关闭窗口应将内存释放！！！！
         openimg = new Form(this);
         m_openimg = openimg;
         connect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
         cv::Mat rgb;
+
         if (3 == image.channels())
         {
+            m_ImgInfor.sPath = name;
+            m_ImgInfor.nWidth = image.rows;
+            m_ImgInfor.nHeight = image.cols;
+            m_ImgInfor.sColorSpace = "3RGB";
             cvtColor(image,rgb,CV_BGR2RGB);
             emit sendImgCenter(rgb, m_ImgInfor);
         }
-        else
+        else if (4 == image.channels())
         {
+            m_ImgInfor.sPath = name;
+            m_ImgInfor.nWidth = image.rows;
+            m_ImgInfor.nHeight = image.cols;
+            m_ImgInfor.sColorSpace = "4RGB";
+            emit sendImgCenter(image, m_ImgInfor);
+        }
+        else if (2 == image.depth())
+        {
+            m_ImgInfor.sPath = name;
+            m_ImgInfor.nWidth = image.rows;
+            m_ImgInfor.nHeight = image.cols;
+            m_ImgInfor.sColorSpace = "2GRAY";
+            emit sendImgCenter(image, m_ImgInfor);
+        }
+        else if (1 == image.channels())
+        {
+            qDebug() << "image.depth = " << image.depth();
+            m_ImgInfor.sPath = name;
+            m_ImgInfor.nWidth = image.rows;
+            m_ImgInfor.nHeight = image.cols;
+            m_ImgInfor.sColorSpace = "1GRAY";
             emit sendImgCenter(image, m_ImgInfor);
         }
         disconnect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
@@ -243,6 +266,20 @@ void CentralWidget::getMouse(int nMouseX, int nMouseY, QColor color, int nChanne
     m_textedit->insertPlainText(sShow);
     m_textedit->moveCursor(QTextCursor::End);
 }
+
+void CentralWidget::getMouseDepth(int nMouseX, int nMouseY, ushort uPixel, int nChannel)
+{
+    QString sCorX = QString::number(nMouseX);
+    QString sCorY = QString::number(nMouseY);
+    QString sPixel = QString::number(uPixel);
+    QString sShow;
+    sShow = "(" + sCorX + ", " + sCorY + ") = " + "[" + sPixel + "]" + "\r\n";
+
+    // 插入textedit显示
+    m_textedit->insertPlainText(sShow);
+    m_textedit->moveCursor(QTextCursor::End);
+}
+
 void CentralWidget::RGB2Gray()
 {
     connect(this, SIGNAL(sendRGB2Gray()), m_openimg, SLOT(RGB2Gray()));
@@ -278,6 +315,12 @@ void CentralWidget::ThresholdAdaptiveSlot()
 {
     connect(this, SIGNAL(sendThresholdAdaptiveSlot()), m_openimg, SLOT(ThresholdAdaptiveSlot()));
     emit sendThresholdAdaptiveSlot();
+}
+
+void CentralWidget::EqualizationSlot()
+{
+    connect(this, SIGNAL(sendEqualizationSlot()), m_openimg, SLOT(EqualizationSlot()));
+    emit sendEqualizationSlot();
 }
 
 void CentralWidget::ButtonShowManageCloseGraySlot(std::vector<std::string> vsShowButtons, std::vector<std::string> vsCloseButtons)

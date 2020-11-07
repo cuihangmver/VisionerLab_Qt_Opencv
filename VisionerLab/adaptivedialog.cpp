@@ -53,7 +53,11 @@ AdaptiveDialog::AdaptiveDialog(QWidget *parent) :
     qButtonHor4->addWidget(pLabel4);
     pLabel4->setText("BlockSize");
     pLabel4->setAlignment(Qt::AlignCenter);
-    pComboBox4->addItems({"3 ","5", "7", "9"});
+    pComboBox4->addItems({"3 ","5", "7", "9",
+                          "11 ","13", "15", "17",
+                          "19 ","21", "23", "25",
+                          "27 ","29", "31", "33",
+                          "35 ","37", "39", "41"});
     qButtonHor4->addWidget(pComboBox4);
     connect(pComboBox4, SIGNAL(currentIndexChanged(QString)), this, SLOT(SetBlockSize(QString)));
     qButtonHor5->addWidget(pLabel5);
@@ -68,7 +72,7 @@ AdaptiveDialog::AdaptiveDialog(QWidget *parent) :
     qButtonVer->addLayout(qButtonHor4);
     qButtonVer->addLayout(qButtonHor5);
 
-    pb = new QPushButton("Ô¤ÀÀ");
+    pb = new QPushButton("é¢„è§ˆ");
     qButtonVer->addWidget(pb);
     connect(pb, SIGNAL(clicked()), this, SLOT(PreviewSelectAdaptive()));
     button = new QDialogButtonBox(parent);
