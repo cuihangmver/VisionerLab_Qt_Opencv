@@ -110,7 +110,11 @@ void Form::Display4DepthMat(cv::Mat image, QImage &img)
     std::vector<std::string> vsShowButtons;
     std::vector<std::string> vsCloseButtons;
     std::string s1 = "actionManual";
+    std::string s2 = "actionOtus";
+    std::string s3 = "actionAdaptive";
     vsCloseButtons.push_back(s1);
+    vsCloseButtons.push_back(s2);
+    vsCloseButtons.push_back(s3);
     emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
     disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>)));;
 }
@@ -126,7 +130,11 @@ void Form::Display3DepthMat(cv::Mat image, QImage &img)
     std::vector<std::string> vsShowButtons;
     std::vector<std::string> vsCloseButtons;
     std::string s1 = "actionManual";
+    std::string s2 = "actionOtus";
+    std::string s3 = "actionAdaptive";
     vsCloseButtons.push_back(s1);
+    vsCloseButtons.push_back(s2);
+    vsCloseButtons.push_back(s3);
     emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
     disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>)));
 }
@@ -180,9 +188,11 @@ void Form::Display1DepthMat(cv::Mat image, QImage &img)
     std::string s1 = "actionManual";
     std::string s2 = "actionOtus";
     std::string s3 = "actionAdaptive";
+    std::string s4 = "actionEqualization";
     vsShowButtons.push_back(s1);
     vsShowButtons.push_back(s2);
     vsShowButtons.push_back(s3);
+    vsShowButtons.push_back(s4);
     emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
     disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>)));
 }
@@ -221,105 +231,23 @@ void Form::DisplayMat(cv::Mat mimage, QLabel *label, double dScaling)
     {
         cv::resize(mimage,image,cv::Size(0,0),dScaling,dScaling,cv::INTER_AREA);
     }
-
-    //}
     QImage img;
-
     // Mat格式转QImage
     if(4 == mimage.channels())
     {
-
         Display4DepthMat(image, img);
-        /*
-        qDebug() << "image.depth = " << image.depth();
-        // BGRA转RGBA
-        img = QImage(image.data,
-                     image.cols,image.rows,image.step,//rgb.cols*rgb.channels()可以替换为image.step
-                     QImage::Format_RGB32);
-                     //QImage::Format_Grayscale8);
-        connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>)));
-        // 打开导航栏中的按钮
-        std::vector<std::string> vsShowButtons;
-        std::vector<std::string> vsCloseButtons;
-        std::string s1 = "actionManual";
-        vsCloseButtons.push_back(s1);
-        emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
-        disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>)));;
-    */
     }
     else if(3 == mimage.channels())
     {
         Display3DepthMat(image, img);
-        /*
-        // BGR转RGB
-        img = QImage((const unsigned char*)(image.data),
-                     image.cols,image.rows,image.cols*image.channels(),//rgb.cols*rgb.channels()可以替换为image.step
-                     QImage::Format_RGB888);            
-        connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>)));
-        // 打开导航栏中的按钮
-        std::vector<std::string> vsShowButtons;
-        std::vector<std::string> vsCloseButtons;
-        std::string s1 = "actionManual";
-        vsCloseButtons.push_back(s1);
-        emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
-        disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>)));;
-        */
     }
     else if(2 == mimage.depth())
     {
         Display2DepthMat(image, img);
-        /*
-        cv::Mat imageCopy(image.rows, image.cols, CV_8UC1);
-
-        for(int nHeight = 0; nHeight < image.rows; nHeight++)
-        {
-            for(int nWidth = 0; nWidth < image.cols; nWidth++)
-            {
-                double dDepth = 65535.0;
-                double dGray = 255.0;
-
-                imageCopy.ptr<uchar>(nHeight)[nWidth] = (uchar)((double)(image.ptr<ushort>(nHeight)[nWidth]) / dDepth * dGray);
-            qDebug() << imageCopy.ptr<uchar>(nHeight)[nWidth];
-            }
-        }
-        cv::imwrite("D:\\QTProj\\ImLab\\de.png", imageCopy);
-        // 灰度图
-        img = QImage((const unsigned char*)(imageCopy.data),
-                     imageCopy.cols,imageCopy.rows,imageCopy.cols*imageCopy.channels(),
-                     QImage::Format_Grayscale8);
-        connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>)));
-        // 打开导航栏中的按钮
-        std::vector<std::string> vsShowButtons;
-        std::vector<std::string> vsCloseButtons;
-        std::string s1 = "actionManual";
-        vsShowButtons.push_back(s1);
-        emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
-        disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>)));
-        */
     }
     else if(1 == mimage.channels())
     {
-
         Display1DepthMat(image, img);
-        /*
-        qDebug() << "image.depth()" << image.depth();
-        // 灰度图
-        img = QImage((const unsigned char*)(image.data),
-                     image.cols,image.rows,image.cols*image.channels(),
-                     QImage::Format_Grayscale8);
-        connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>)));
-        // 打开导航栏中的按钮
-        std::vector<std::string> vsShowButtons;
-        std::vector<std::string> vsCloseButtons;
-        std::string s1 = "actionManual";
-        std::string s2 = "actionOtus";
-        std::string s3 = "actionAdaptive";
-        vsShowButtons.push_back(s1);
-        vsShowButtons.push_back(s2);
-        vsShowButtons.push_back(s3);
-        emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
-        disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>)));
-        */
     }
     // 需要使用copy()
     QPixmap fitpixmap = QPixmap::fromImage(img.copy());
@@ -328,64 +256,21 @@ void Form::DisplayMat(cv::Mat mimage, QLabel *label, double dScaling)
     // QLabel居中
     label->setAlignment(Qt::AlignCenter);
 }
-/*
-void Form::getImg(cv::Mat mImg, INFOR_BASE::sImgInfor imgInfor)
-{
-    m_mImg = mImg.clone();
-    m_imgInfor = imgInfor;
-    //layout布局
-    pb=new QPushButton("放大");
-    pb1=new QPushButton("缩小");
-    pb2=new QPushButton("恢复");
-    QHBoxLayout *pg=new QHBoxLayout;
-    QVBoxLayout *pv=new QVBoxLayout;
-    pg->addWidget(pb);
-    pg->addWidget(pb1);
-    pg->addWidget(pb2);
 
-    // 设置滚动条相关
-    scrollArea->setWidget(m_label);
-    //scrollArea->setBackgroundRole(QPalette::Dark);
-    scrollArea->setGeometry(0,0,m_label->width()+100,m_label->height()-60);
-    scrollArea->setAlignment(Qt::AlignCenter);
-    scrollArea->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    scrollArea->setAlignment(Qt::AlignCenter);
-
-    //设置是否自动调整部件的大小.默认是false.
-    scrollArea->setWidgetResizable(true);
-
-    // 设置qlabel相关
-    m_label->setStyleSheet("border:1px solid black;");
-    // 设置鼠标移动相应
-    DisplayMat(mImg, m_label, m_dScaling);
-
-    // 这两个控件都要相应鼠标事件
-    m_label->setMouseTracking(true);
-    scrollArea->setMouseTracking(true);
-
-    pv->addWidget(scrollArea);
-    pv->addLayout(pg,1);
-    this->setLayout(pv);
-    this->resize(m_mImg.cols,m_mImg.rows);
-    this->show();
-}
-*/
 // 显示图像窗口
 void Form::getImgCenter(cv::Mat mImg, INFOR_BASE::sImgInfor imgInfor)
 {
     m_mImg = mImg.clone();
     m_imgInfor = imgInfor;
     /*layout布局*/
-    pb=new QPushButton("放大");
-    pb1=new QPushButton("缩小");
-    pb2=new QPushButton("恢复");
-    pg = new QHBoxLayout;
+    //pb=new QPushButton("放大");
+    //pb1=new QPushButton("缩小");
+    //pb2=new QPushButton("恢复");
+    //pg = new QHBoxLayout;
     pv = new QVBoxLayout;
-    pg->addWidget(pb);
-    pg->addWidget(pb1);
-    pg->addWidget(pb2);
+    //pg->addWidget(pb);
+   //pg->addWidget(pb1);
+    //pg->addWidget(pb2);
     // 设置滚动条相关
     scrollArea->setWidget(m_label);
     scrollArea->setGeometry(0,0,m_label->width()+100,m_label->height()-60);
@@ -399,17 +284,12 @@ void Form::getImgCenter(cv::Mat mImg, INFOR_BASE::sImgInfor imgInfor)
     // 设置qlabel相关
     m_label->setStyleSheet("border:1px solid black;");
     // 设置鼠标移动相应
-
-
-        DisplayMat(m_mImg, m_label, m_dScaling);
-
-
-
+    DisplayMat(m_mImg, m_label, m_dScaling);
     // 这两个控件都要相应鼠标事件
     m_label->setMouseTracking(true);
     scrollArea->setMouseTracking(true);
     pv->addWidget(scrollArea);
-    pv->addLayout(pg,1);
+    //pv->addLayout(pg,1);
     this->setLayout(pv);
     this->resize(m_mImg.cols,m_mImg.rows);
     this->show();
@@ -451,11 +331,8 @@ void Form::mousePressEvent(QMouseEvent * e)
             {
                 int nChannel = m_mImg.depth();
                 int nX = (int)((ptLabel.x() - xoffset) / m_dScaling);
-                int nY = (int)((ptLabel.y() - yoffset-1) / m_dScaling);
-                qDebug() << nX;
-                qDebug() << nY;
-                ushort uPixel = m_mImg.ptr<ushort>(nY)[nX];
-                qDebug() <<"pixel = "<< uPixel;
+                int nY = (int)((ptLabel.y() - yoffset-1) / m_dScaling);          
+                ushort uPixel = m_mImg.ptr<ushort>(nY)[nX];                
                 //ushort uPixel = m_mImg.at<ushort>(nY, nX);
                 emit sendMouseDepth((ptLabel.x() - xoffset) / m_dScaling, (ptLabel.y() - yoffset-1) / m_dScaling, uPixel, nChannel);
             }
@@ -536,9 +413,11 @@ void Form::closeEvent(QCloseEvent *event) //根据不同的需求进行添加，
 {
     if(!m_bModifyImg)
     {
-        //qApp->quit();
-        this->close();
+        connect(this, SIGNAL(sendCloseImgWindow()), m_parentCopy, SLOT(CloseImgWindowFromFormSlot()));
+        emit sendCloseImgWindow();
+        return ;
     }
+
     QString filepath = QString::fromStdString(m_imgInfor.sPath);
 
     int ret = QMessageBox::warning(0,"Warning",QString("%1 has been changed!\n Do you want to save it?").arg(filepath),QMessageBox::Yes |QMessageBox::No|QMessageBox::Cancel,QMessageBox::No);
@@ -549,10 +428,12 @@ void Form::closeEvent(QCloseEvent *event) //根据不同的需求进行添加，
     }
     else if(ret == QMessageBox::Cancel)
     {
+        //setAttribute(Qt::WA_DeleteOnClose);
         this->close();
     }
     else
     {
+        //setAttribute(Qt::WA_DeleteOnClose);
         this->close();
     }
 }
@@ -562,6 +443,7 @@ void Form::closeEventSlot()
 {
     if(!m_bModifyImg)
     {
+
         this->close();
     }
     QString filepath = QString::fromStdString(m_imgInfor.sPath);
@@ -633,53 +515,162 @@ void Form::Gray2RGB()
 
 void Form::ManualThresholdSlot()
 {
-    m_dialogSlider = new DialogSlider(this);
+    m_bModifyImg = true;
+    int nDepth = 0;
+    if(2 == m_mImg.depth())
+    {
+        nDepth = 2;
+    }
+    else if(1 == m_mImg.channels())
+    {
+        nDepth = 1;
+    }
+    m_dialogSlider = new DialogSlider(this, nDepth);
+    m_dialogSlider->setModal(true);
     m_dialogSlider->show();
 }
 void Form::ManualThresholdChangeSlot(int nValue)
 {
+    m_bModifyImg = true;
     cv::threshold(m_mImg, m_mTem, nValue, 255, cv::THRESH_BINARY_INV);
     DisplayMat(m_mTem, m_label, m_dScaling);
 }
 
 void Form::ThresholdOtusSlot()
 {
+    m_bModifyImg = true;
     cv::threshold(m_mImg, m_mImg, 0, 255, CV_THRESH_OTSU);
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 
 void Form::ThresholdAdaptiveSlot()
 {
+    m_bModifyImg = true;
     m_pAdaptiveDialog = new AdaptiveDialog(this);
     m_pAdaptiveDialog->show();
 }
 
 void Form::ThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC)
 {
+    m_bModifyImg = true;
     m_mImg = m_mTem.clone();
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 void Form::PreviewThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC)
 {
+    m_bModifyImg = true;
     cv::adaptiveThreshold(m_mImg, m_mTem, dMaxValue, nAdaptiveMethod, nThresholdType, nBlockSize, dC);
     DisplayMat(m_mTem, m_label, m_dScaling);
 }
 
 void Form::EqualizationSlot()
 {
-    cv::Mat mDst;
-    cv::equalizeHist(m_mImg, mDst);
-    //DisplayMat(m_mImg, m_label, m_dScaling);
+    m_bModifyImg = true;
+    cv::equalizeHist(m_mImg, m_mImg);
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+
+void Form::SobelSlot()
+{
+    m_bModifyImg = true;
+    // 参数4 = 1，参数5 = 0，表示x方向的导数，垂直方向边缘
+    cv::Sobel(m_mImg, m_mImg, -1, 1, 0, 3);
+    // 参数4 = 0，参数5 = 1，表示y方向的导数，水平方向边缘
+    // 参数6为卷积核大小，当为1时，表示1*3或3*1
+    cv::Sobel(m_mImg, m_mImg, -1, 0, 1, 3);
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+
+void Form::Scharr_3_3Slot()
+{
+    m_bModifyImg = true;
+    // 参数4 = 1，参数5 = 0，表示x方向的导数，垂直方向边缘
+    cv::Scharr(m_mImg, m_mImg, -1, 1, 0, 3);
+    // 参数4 = 0，参数5 = 1，表示y方向的导数，水平方向边缘
+    // 参数6为卷积核大小，当为1时，表示1*3或3*1
+    cv::Scharr(m_mImg, m_mImg, -1, 0, 1, 3);
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+
+void Form::Laplacian_5_5Slot()
+{
+    m_bModifyImg = true;
+    cv::Laplacian(m_mImg, m_mImg, -1, 5, 1, 0, cv::BORDER_DEFAULT);
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+
+void Form::Laplacian_7_7Slot()
+{
+    m_bModifyImg = true;
+    cv::Laplacian(m_mImg, m_mImg, -1, 7, 1, 0, cv::BORDER_DEFAULT);
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+void Form::Gaussian_3_3Slot()
+{
+    m_bModifyImg = true;
+    cv::GaussianBlur(m_mImg, m_mImg, cv::Size(3, 3), 3, 3);
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+void Form::Gaussian_5_5Slot()
+{
+    m_bModifyImg = true;
+    cv::GaussianBlur(m_mImg, m_mImg, cv::Size(5, 5), 3, 3);
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+void Form::Gaussian_7_7Slot()
+{
+    m_bModifyImg = true;
+    cv::GaussianBlur(m_mImg, m_mImg, cv::Size(7, 7), 3, 3);
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+
+void Form::Mean_3_3Slot()
+{
+    m_bModifyImg = true;
+    blur(m_mImg,m_mImg, cv::Size(3,3));
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+void Form::Mean_5_5Slot()
+{
+    m_bModifyImg = true;
+    blur(m_mImg,m_mImg, cv::Size(5,5));
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+void Form::Mean_7_7Slot()
+{
+    m_bModifyImg = true;
+    blur(m_mImg,m_mImg, cv::Size(7,7));
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+void Form::Median_3_3Slot()
+{
+    m_bModifyImg = true;
+    medianBlur(m_mImg,m_mImg, 3);
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+void Form::Median_5_5Slot()
+{
+    m_bModifyImg = true;
+    medianBlur(m_mImg,m_mImg, 5);
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+void Form::Median_7_7Slot()
+{
+    m_bModifyImg = true;
+    medianBlur(m_mImg,m_mImg, 7);
+    DisplayMat(m_mImg, m_label, m_dScaling);
 }
 void Form::OKSelectImg()
 {
+    m_bModifyImg = true;
     m_mImg = m_mTem.clone();
     DisplayMat(m_mImg, m_label, m_dScaling);
+    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
     m_dialogSlider->close();
-
 }
 void Form::CancelSelectImg()
 {
+    m_bModifyImg = true;
     DisplayMat(m_mImg, m_label, m_dScaling);
     m_dialogSlider->close();
 }

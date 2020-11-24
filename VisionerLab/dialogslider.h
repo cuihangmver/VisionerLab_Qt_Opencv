@@ -10,6 +10,7 @@
 #include <QCheckBox>
 #include <QDialogButtonBox>
 #include <QPushButton>
+#include <opencv2/opencv.hpp>
 namespace Ui {
 class DialogSlider;
 }
@@ -19,7 +20,7 @@ class DialogSlider : public QDialog
     Q_OBJECT
 
 public:
-    explicit DialogSlider(QWidget *parent = nullptr);
+    explicit DialogSlider(QWidget *parent = nullptr, int nDepth = 0);
     ~DialogSlider();
 private slots:
     void ManualThresholdChangeSlot(int nValue);

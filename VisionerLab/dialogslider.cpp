@@ -1,15 +1,28 @@
 #include "dialogslider.h"
 #include "ui_dialogslider.h"
 
-DialogSlider::DialogSlider(QWidget *parent) :
+DialogSlider::DialogSlider(QWidget *parent, int nDepth) :
     QDialog(parent),
     ui(new Ui::DialogSlider)
 {
     ui->setupUi(this);
     m_parent = parent;
     int nMin = 0;
-    int nMax = 255;
-    int nSingleStep = 10;
+    int nMax = 0;
+    int nSingleStep = 0;
+    if(1 == nDepth)
+    {
+        nMin = 0;
+        nMax = 255;
+        nSingleStep = 1;
+    }
+    else if(2 == nDepth)
+    {
+        nMin = 0;
+        nMax = 65535;
+        nSingleStep = 1;
+    }
+
 
     qButtonVer = new QVBoxLayout;
     qSliderHor1 = new QHBoxLayout;

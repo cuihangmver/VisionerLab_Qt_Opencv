@@ -35,30 +35,38 @@ SOURCES += \
     inforbase.cpp \
     centralwidget.cpp \
     dialogslider.cpp \
-    adaptivedialog.cpp
+    adaptivedialog.cpp \
+    gaussiandialog.cpp
 
 # opencv3.4.0
 INCLUDEPATH += E:/ProfessionalSoftware/QT/opencv/opencv/build/include \
                E:/ProfessionalSoftware/QT/opencv/opencv/build/include/opencv \
                E:/ProfessionalSoftware/QT/opencv/opencv/build/include/opencv2
 LIBS+=E:/ProfessionalSoftware/QT/opencv/opencv/build/x64/vc14/lib/opencv_world340d.lib
-
+LIBS+=E:/ProfessionalSoftware/QT/opencv/opencv/build/x64/vc14/lib/opencv_world340.lib
 HEADERS += \
         mainwindow.h \
     form.h \
     inforbase.h \
     centralwidget.h \
     dialogslider.h \
-    adaptivedialog.h
+    adaptivedialog.h \
+    gaussiandialog.h
 
 FORMS += \
         mainwindow.ui \
     form.ui \
     centralwidget.ui \
     dialogslider.ui \
-    adaptivedialog.ui
+    adaptivedialog.ui \
+    gaussiandialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    VisionerLab.rc
+RC_FILE = \
+    VisionerLab.rc

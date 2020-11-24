@@ -18,6 +18,7 @@
 #include "dialogslider.h"
 #include "adaptivedialog.h"
 #include <QTime>
+
 namespace Ui {
 class Form;
 }
@@ -82,13 +83,28 @@ private slots:
     void ThresholdOtusSlot();
     void ThresholdAdaptiveSlot();
     void EqualizationSlot();
+    void SobelSlot();
+    void Scharr_3_3Slot();
+    void Laplacian_5_5Slot();
+    void Laplacian_7_7Slot();
+    void Gaussian_3_3Slot();
+    void Gaussian_5_5Slot();
+    void Gaussian_7_7Slot();
+    void Mean_3_3Slot();
+    void Mean_5_5Slot();
+    void Mean_7_7Slot();
+    void Median_3_3Slot();
+    void Median_5_5Slot();
+    void Median_7_7Slot();
     void ThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC);
     void PreviewThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC);
+
 signals:
     // 信号函数
     void sendMouse(int, int, QColor, int );
     void sendMouseDepth(int, int, ushort, int );
     void sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>);
+    void sendCloseImgWindow();
 };
 
 #endif // FORM_H

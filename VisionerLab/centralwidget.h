@@ -54,9 +54,24 @@ private slots:
     void ThresholdOtusSlot();
     void ThresholdAdaptiveSlot();
     void EqualizationSlot();
+    void SobelSlot();
+    void Scharr_3_3Slot();
+    void Laplacian_5_5Slot();
+    void Laplacian_7_7Slot();
+    void Gaussian_3_3Slot();
+    void Gaussian_5_5Slot();
+    void Gaussian_7_7Slot();
+    void Mean_3_3Slot();
+    void Mean_5_5Slot();
+    void Mean_7_7Slot();
+    void Median_3_3Slot();
+    void Median_5_5Slot();
+    void Median_7_7Slot();
     void ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>);
     void ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>);
-// 定义信号，可以与子窗口进行通信
+    void CloseImgWindowSlot();
+    void CloseImgWindowFromFormSlot();
+    // 定义信号，可以与子窗口进行通信
 signals:
     void sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor);
     void sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>);
@@ -68,6 +83,20 @@ signals:
     void sendThresholdOtusSlot();
     void sendThresholdAdaptiveSlot();
     void sendEqualizationSlot();
+    void sendSobelSlot();
+    void sendScharr_3_3Slot();
+    void sendLaplacian_5_5Slot();
+    void sendLaplacian_7_7Slot();
+    void sendGaussian_3_3Slot();
+    void sendGaussian_5_5Slot();
+    void sendGaussian_7_7Slot();
+    void sendMean_3_3Slot();
+    void sendMean_5_5Slot();
+    void sendMean_7_7Slot();
+    void sendMedian_3_3Slot();
+    void sendMedian_5_5Slot();
+    void sendMedian_7_7Slot();
+    void sendCloseImgWindow();
 };
 
 #endif // CENTRALWIDGET_H

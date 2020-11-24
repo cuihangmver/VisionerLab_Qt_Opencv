@@ -14,18 +14,18 @@ CentralWidget::CentralWidget(int a, QWidget *parent)
     m_textedit = new QTextEdit();
     // 对主界面进行布局
     // button的布局
-    qButtonHor = new QHBoxLayout;
+    //qButtonHor = new QHBoxLayout;
     qButtonVer = new QVBoxLayout;
-    btn1 = new QPushButton;
-    btn2 = new QPushButton;
-    btn3 = new QPushButton;
-    btn1 ->setText("back");
-    btn2 ->setText("ahead");
-    btn3 ->setText("histogram");
-    qButtonHor->addWidget(btn1);
-    qButtonHor->addWidget(btn2);
-    qButtonHor->addWidget(btn3);
-    qButtonVer->addLayout(qButtonHor,1);
+   // btn1 = new QPushButton;
+    //btn2 = new QPushButton;
+    //btn3 = new QPushButton;
+    //btn1 ->setText("back");
+    //btn2 ->setText("ahead");
+    //btn3 ->setText("histogram");
+    //qButtonHor->addWidget(btn1);
+    //qButtonHor->addWidget(btn2);
+    //qButtonHor->addWidget(btn3);
+    //qButtonVer->addLayout(qButtonHor,1);
     m_textedit = new QTextEdit();
     m_textedit->setReadOnly(true);
     this->setAcceptDrops(true);
@@ -136,6 +136,7 @@ void CentralWidget::dropEvent(QDropEvent *event)
         std::string s5 = "actionsave_2";
         std::string s6 = "actionBinary";
         std::string s7 = "actionManual";
+        std::string s8 = "menuConvolve_Kernel";
         vsShowButtons.push_back(s1);
         vsShowButtons.push_back(s2);
         vsShowButtons.push_back(s3);
@@ -143,6 +144,7 @@ void CentralWidget::dropEvent(QDropEvent *event)
         vsShowButtons.push_back(s5);
         vsShowButtons.push_back(s6);
         vsShowButtons.push_back(s7);
+        vsShowButtons.push_back(s8);
         emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
         disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
 
@@ -180,7 +182,6 @@ void CentralWidget::dropEvent(QDropEvent *event)
         }
         else if (1 == image.channels())
         {
-            qDebug() << "image.depth = " << image.depth();
             m_ImgInfor.sPath = name;
             m_ImgInfor.nWidth = image.rows;
             m_ImgInfor.nHeight = image.cols;
@@ -287,7 +288,7 @@ void CentralWidget::RGB2Gray()
 }
 void CentralWidget::Gray2RGB()
 {
-    connect(this, SIGNAL(sendGrayRGB()), m_openimg, SLOT(Gray2RGB()));
+    connect(this, SIGNAL(sendGray2RGB()), m_openimg, SLOT(Gray2RGB()));
     emit sendGray2RGB();
 }
 void CentralWidget::closeEventSlot()
@@ -305,6 +306,7 @@ void CentralWidget::ManualThresholdSlot()
 {
     connect(this, SIGNAL(sendManualThresholdSlot()), m_openimg, SLOT(ManualThresholdSlot()));
     emit sendManualThresholdSlot(); 
+    disconnect(this, SIGNAL(sendManualThresholdSlot()), m_openimg, SLOT(ManualThresholdSlot()));
 }
 void CentralWidget::ThresholdOtusSlot()
 {
@@ -315,6 +317,7 @@ void CentralWidget::ThresholdAdaptiveSlot()
 {
     connect(this, SIGNAL(sendThresholdAdaptiveSlot()), m_openimg, SLOT(ThresholdAdaptiveSlot()));
     emit sendThresholdAdaptiveSlot();
+    disconnect(this, SIGNAL(sendThresholdAdaptiveSlot()), m_openimg, SLOT(ThresholdAdaptiveSlot()));
 }
 
 void CentralWidget::EqualizationSlot()
@@ -323,6 +326,73 @@ void CentralWidget::EqualizationSlot()
     emit sendEqualizationSlot();
 }
 
+void CentralWidget::SobelSlot()
+{
+    connect(this, SIGNAL(sendSobelSlot()), m_openimg, SLOT(SobelSlot()));
+    emit sendSobelSlot();
+}
+
+void CentralWidget::Scharr_3_3Slot()
+{
+    connect(this, SIGNAL(sendScharr_3_3Slot()), m_openimg, SLOT(Scharr_3_3Slot()));
+    emit sendScharr_3_3Slot();
+}
+
+void CentralWidget::Laplacian_5_5Slot()
+{
+    connect(this, SIGNAL(sendLaplacian_5_5Slot()), m_openimg, SLOT(Laplacian_5_5Slot()));
+    emit sendLaplacian_5_5Slot();
+}
+void CentralWidget::Laplacian_7_7Slot()
+{
+    connect(this, SIGNAL(sendLaplacian_7_7Slot()), m_openimg, SLOT(Laplacian_7_7Slot()));
+    emit sendLaplacian_7_7Slot();
+}
+void CentralWidget::Gaussian_3_3Slot()
+{
+    connect(this, SIGNAL(sendGaussian_3_3Slot()), m_openimg, SLOT(Gaussian_3_3Slot()));
+    emit sendGaussian_3_3Slot();
+}
+void CentralWidget::Gaussian_5_5Slot()
+{
+    connect(this, SIGNAL(sendGaussian_5_5Slot()), m_openimg, SLOT(Gaussian_5_5Slot()));
+    emit sendGaussian_5_5Slot();
+}
+void CentralWidget::Gaussian_7_7Slot()
+{
+    connect(this, SIGNAL(sendGaussian_7_7Slot()), m_openimg, SLOT(Gaussian_7_7Slot()));
+    emit sendGaussian_7_7Slot();
+}
+void CentralWidget::Mean_3_3Slot()
+{
+    connect(this, SIGNAL(sendMean_3_3Slot()), m_openimg, SLOT(Mean_3_3Slot()));
+    emit sendMean_3_3Slot();
+}
+void CentralWidget::Mean_5_5Slot()
+{
+    connect(this, SIGNAL(sendMean_5_5Slot()), m_openimg, SLOT(Mean_5_5Slot()));
+    emit sendMean_5_5Slot();
+}
+void CentralWidget::Mean_7_7Slot()
+{
+    connect(this, SIGNAL(sendMean_7_7Slot()), m_openimg, SLOT(Mean_7_7Slot()));
+    emit sendMean_7_7Slot();
+}
+void CentralWidget::Median_3_3Slot()
+{
+    connect(this, SIGNAL(sendMedian_3_3Slot()), m_openimg, SLOT(Median_3_3Slot()));
+    emit sendMedian_3_3Slot();
+}
+void CentralWidget::Median_5_5Slot()
+{
+    connect(this, SIGNAL(sendMedian_5_5Slot()), m_openimg, SLOT(Median_5_5Slot()));
+    emit sendMedian_5_5Slot();
+}
+void CentralWidget::Median_7_7Slot()
+{
+    connect(this, SIGNAL(sendMedian_7_7Slot()), m_openimg, SLOT(Median_7_7Slot()));
+    emit sendMedian_7_7Slot();
+}
 void CentralWidget::ButtonShowManageCloseGraySlot(std::vector<std::string> vsShowButtons, std::vector<std::string> vsCloseButtons)
 {
     connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
@@ -332,4 +402,16 @@ void CentralWidget::ButtonShowManageOpenGraySlot(std::vector<std::string> vsShow
 {
     connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
     emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
+}
+void CentralWidget::CloseImgWindowSlot()
+{
+    //connect(this, SIGNAL(sendCloseImgWindow()), c, SLOT(CloseImgWindowSlot()));
+    //emit sendCloseImgWindow();
+    openimg->close();
+}
+
+void CentralWidget::CloseImgWindowFromFormSlot()
+{
+    qDebug("cllse");
+    openimg->close();
 }

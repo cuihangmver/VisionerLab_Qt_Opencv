@@ -82,12 +82,37 @@
      <addaction name="actionEqualization"/>
      <addaction name="actionExpansion"/>
     </widget>
+    <widget class="QMenu" name="menuFilter">
+     <property name="title">
+      <string>Filter</string>
+     </property>
+     <widget class="QMenu" name="menuConvolve_Kernel">
+      <property name="title">
+       <string>Convolve Kernel</string>
+      </property>
+      <addaction name="actionSobel"/>
+      <addaction name="actionScharr_3_3"/>
+      <addaction name="actionLaplacian_5_5"/>
+      <addaction name="actionLaplacian_7_7"/>
+      <addaction name="actionGaussian_3_3"/>
+      <addaction name="actionGaussian_5_5"/>
+      <addaction name="actionGaussian_7_7"/>
+      <addaction name="actionMean_3_3"/>
+      <addaction name="actionMean_5_5"/>
+      <addaction name="actionMean_7_7"/>
+      <addaction name="actionMedian_3_3"/>
+      <addaction name="actionMedian_5_5"/>
+      <addaction name="actionMedian_7_7"/>
+     </widget>
+     <addaction name="menuConvolve_Kernel"/>
+    </widget>
     <addaction name="actionSize"/>
     <addaction name="actionGeometric"/>
     <addaction name="actionQuantize"/>
     <addaction name="actionColor_Compon"/>
     <addaction name="menuThreshold"/>
     <addaction name="menuHistogram"/>
+    <addaction name="menuFilter"/>
    </widget>
    <widget class="QMenu" name="menuAnalyze">
     <property name="title">
@@ -114,6 +139,9 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextBesideIcon</enum>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
@@ -238,6 +266,71 @@
   <action name="actionExpansion">
    <property name="text">
     <string>Expansion</string>
+   </property>
+  </action>
+  <action name="actionSobel">
+   <property name="text">
+    <string>Sobel 3*3</string>
+   </property>
+  </action>
+  <action name="actionScharr_3_3">
+   <property name="text">
+    <string>Scharr 3*3</string>
+   </property>
+  </action>
+  <action name="actionLaplacian_5_5">
+   <property name="text">
+    <string>Laplacian 5*5</string>
+   </property>
+  </action>
+  <action name="actionLaplacian_7_7">
+   <property name="text">
+    <string>Laplacian 7*7</string>
+   </property>
+  </action>
+  <action name="actionGaussian_3_3">
+   <property name="text">
+    <string>Gaussian 3*3</string>
+   </property>
+  </action>
+  <action name="actionGaussian_5_5">
+   <property name="text">
+    <string>Gaussian 5*5</string>
+   </property>
+  </action>
+  <action name="actionGaussian_7_7">
+   <property name="text">
+    <string>Gaussian 7*7</string>
+   </property>
+  </action>
+  <action name="actionMean_3_3">
+   <property name="text">
+    <string>Mean 3*3</string>
+   </property>
+  </action>
+  <action name="actionMean_5_5">
+   <property name="text">
+    <string>Mean 5*5</string>
+   </property>
+  </action>
+  <action name="actionMean_7_7">
+   <property name="text">
+    <string>Mean 7*7</string>
+   </property>
+  </action>
+  <action name="actionMedian_3_3">
+   <property name="text">
+    <string>Median 3*3</string>
+   </property>
+  </action>
+  <action name="actionMedian_5_5">
+   <property name="text">
+    <string>Median 5*5</string>
+   </property>
+  </action>
+  <action name="actionMedian_7_7">
+   <property name="text">
+    <string>Median 7*7</string>
    </property>
   </action>
  </widget>

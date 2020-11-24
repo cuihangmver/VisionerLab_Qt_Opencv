@@ -46,6 +46,7 @@ public:
     void getCentralWidget(CentralWidget *cenwidget);
 private:
     // 事件相应函数
+    void closeEvent(QCloseEvent *event);
 private slots:
     // 槽函数
     void on_actionOpen_triggered();
@@ -61,6 +62,7 @@ private:
 // 定义信号，可以与子窗口进行通信
 signals:
     void sendImg(cv::Mat, INFOR_BASE::sImgInfor);
+    void sendCloseImgWindow();
 };
 
 #endif // MAINWINDOW_H

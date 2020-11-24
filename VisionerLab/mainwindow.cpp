@@ -21,6 +21,19 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionOtus, SIGNAL(triggered()), c,SLOT(ThresholdOtusSlot()));
     connect(ui->actionAdaptive, SIGNAL(triggered()), c,SLOT(ThresholdAdaptiveSlot()));
     connect(ui->actionEqualization, SIGNAL(triggered()), c,SLOT(EqualizationSlot()));
+    connect(ui->actionSobel, SIGNAL(triggered()), c,SLOT(SobelSlot()));
+    connect(ui->actionScharr_3_3, SIGNAL(triggered()), c,SLOT(Scharr_3_3Slot()));
+    connect(ui->actionLaplacian_5_5, SIGNAL(triggered()), c,SLOT(Laplacian_5_5Slot()));
+    connect(ui->actionLaplacian_7_7, SIGNAL(triggered()), c,SLOT(Laplacian_7_7Slot()));
+    connect(ui->actionGaussian_3_3, SIGNAL(triggered()), c,SLOT(Gaussian_3_3Slot()));
+    connect(ui->actionGaussian_5_5, SIGNAL(triggered()), c,SLOT(Gaussian_5_5Slot()));
+    connect(ui->actionGaussian_7_7, SIGNAL(triggered()), c,SLOT(Gaussian_7_7Slot()));
+    connect(ui->actionMean_3_3, SIGNAL(triggered()), c,SLOT(Mean_3_3Slot()));
+    connect(ui->actionMean_5_5, SIGNAL(triggered()), c,SLOT(Mean_5_5Slot()));
+    connect(ui->actionMean_7_7, SIGNAL(triggered()), c,SLOT(Mean_7_7Slot()));
+    connect(ui->actionMedian_3_3, SIGNAL(triggered()), c,SLOT(Median_3_3Slot()));
+    connect(ui->actionMedian_5_5, SIGNAL(triggered()), c,SLOT(Median_5_5Slot()));
+    connect(ui->actionMedian_7_7, SIGNAL(triggered()), c,SLOT(Median_7_7Slot()));
     initButton(ui);
     m_ui = ui;
     m_parent = parent;
@@ -61,8 +74,9 @@ void MainWindow::initButton(Ui::MainWindow *ui)
     ui->actionAdaptive->setDisabled(true);
     ui->actionEqualization->setDisabled(true);
     ui->actionExpansion->setDisabled(true);
-
+    ui->menuConvolve_Kernel->setDisabled(true);
 }
+
 
 void MainWindow::openButton(Ui::MainWindow *ui)
 {
@@ -102,6 +116,8 @@ void MainWindow::OpenNew()
 
 void MainWindow::ButtonShowManage(std::vector<std::string> vsShowButtons, std::vector<std::string> vsCloseButtons)
 {
+    // 将所有图像处理按钮关闭
+
     std::string s1 = "actionRGB";
     std::string s2 = "actionGray";
     std::string s3 = "actionMap";
@@ -111,7 +127,8 @@ void MainWindow::ButtonShowManage(std::vector<std::string> vsShowButtons, std::v
     std::string s7 = "actionManual";
     std::string s8 = "actionOtus";
     std::string s9 = "actionAdaptive";
-    qDebug() << vsShowButtons.size();
+    std::string s10 = "actionEqualization";
+    std::string s11 = "menuConvolve_Kernel";
 
     for(int i = 0; i < vsShowButtons.size(); i++)
     {
@@ -152,6 +169,14 @@ void MainWindow::ButtonShowManage(std::vector<std::string> vsShowButtons, std::v
         {
             ui->actionAdaptive->setDisabled(false);
         }
+        else if(s10 == vsShowButtons[i])
+        {
+            ui->actionEqualization->setDisabled(false);
+        }
+        else if(s11 == vsShowButtons[i])
+        {
+            ui->menuConvolve_Kernel->setDisabled(false);
+        }
     }
 
     for(int i = 0; i < vsCloseButtons.size(); i++)
@@ -186,55 +211,25 @@ void MainWindow::ButtonShowManage(std::vector<std::string> vsShowButtons, std::v
         }
         else if(s8 == vsCloseButtons[i])
         {
-            ui->actionManual->setDisabled(true);
+            ui->actionOtus->setDisabled(true);
         }
         else if(s9 == vsCloseButtons[i])
         {
-            ui->actionManual->setDisabled(true);
+            ui->actionAdaptive->setDisabled(true);
+        }
+        else if(s10 == vsShowButtons[i])
+        {
+            ui->actionEqualization->setDisabled(true);
+        }
+        else if(s11 == vsShowButtons[i])
+        {
+            ui->menuConvolve_Kernel->setDisabled(true);
         }
     }
 }
 
 void MainWindow::on_actionOpen_triggered()
 {
-    /* 打开txt文件
-    QString fileName;
-    // 选择单个文件，选择多个文件用getOpenFileNames
-    fileName = QFileDialog::getOpenFileName(this, "Open File", "./", "Text File(*.txt)");
-    if("" == fileName)
-    {
-        return ;
-    }
-    else
-    {
-        QFile file(fileName);
-
-        if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        {
-            QMessageBox::warning(this,"error","open file error!");
-            return;
-        }
-        else
-        {
-            if(!file.isReadable())
-                QMessageBox::warning(this,"error","this file is not readable!");
-            else
-            {
-                // 将打开的文本显示在textEdit中
-                QTextStream textStream(&file);
-                while(!textStream.atEnd())
-                {
-                    ui->textEdit->setPlainText(textStream.readAll());
-                }
-                ui->textEdit->show();
-                file.close();
-                //flag_isOpen = 1;
-                //Last_FileName = fileName;
-            }
-
-        }
-    }
-    */
     // 打开图像
     QString fileNameImg = QFileDialog::getOpenFileName(this, tr("Open Image"),"./",tr("Image File (*.jpg *.png *.bmp)"));
     QTextCodec *code = QTextCodec::codecForName("gb18030");
@@ -256,4 +251,10 @@ void MainWindow::on_actionOpen_triggered()
         emit sendImg(image, m_ImgInfor);
         disconnect(this,SIGNAL(sendImg(cv::Mat, INFOR_BASE::sImgInfor)),c,SLOT(OpenNew(cv::Mat, INFOR_BASE::sImgInfor)));
     }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    connect(this, SIGNAL(sendCloseImgWindow()), c, SLOT(CloseImgWindowSlot()));
+    emit sendCloseImgWindow();
 }
