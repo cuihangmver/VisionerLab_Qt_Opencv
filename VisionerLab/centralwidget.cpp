@@ -10,22 +10,12 @@ CentralWidget::CentralWidget(QWidget *parent) :
 }
 CentralWidget::CentralWidget(int a, QWidget *parent)
 {
+    vfOpenImg.clear();
     m_parentCopy = parent;
     m_textedit = new QTextEdit();
     // 对主界面进行布局
-    // button的布局
-    //qButtonHor = new QHBoxLayout;
+
     qButtonVer = new QVBoxLayout;
-   // btn1 = new QPushButton;
-    //btn2 = new QPushButton;
-    //btn3 = new QPushButton;
-    //btn1 ->setText("back");
-    //btn2 ->setText("ahead");
-    //btn3 ->setText("histogram");
-    //qButtonHor->addWidget(btn1);
-    //qButtonHor->addWidget(btn2);
-    //qButtonHor->addWidget(btn3);
-    //qButtonVer->addLayout(qButtonHor,1);
     m_textedit = new QTextEdit();
     m_textedit->setReadOnly(true);
     this->setAcceptDrops(true);
@@ -107,6 +97,96 @@ void CentralWidget::dropEvent(QDropEvent *event)
     }
     QList<QUrl> urlList = mimeData->urls();
 
+    for(int i = 0; i < urlList.size(); i++)
+    {
+        QString fileName = urlList.at(i).toLocalFile();
+
+        if(fileName.isEmpty())
+        {
+            return;
+        }
+        QTextCodec *code = QTextCodec::codecForName("gb18030");
+        std::string name = code->fromUnicode(fileName).data();//filename.toAscii().data()
+        cv::Mat image = cv::imread(name, -1);
+
+        if(!image.data)
+        {
+            QMessageBox msgBox;
+            msgBox.setText(tr("Image Data Is Null"));
+            msgBox.exec();
+        }
+        else
+        {
+            // 将灰色按钮打开
+            connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
+            std::vector<std::string> vsShowButtons;
+            std::vector<std::string> vsCloseButtons;
+            std::string s1 = "actionRGB";
+            std::string s2 = "actionGray";
+            std::string s3 = "actionMap";
+            std::string s4 = "actionsave";
+            std::string s5 = "actionsave_2";
+            std::string s6 = "actionBinary";
+            std::string s7 = "actionManual";
+            std::string s8 = "menuConvolve_Kernel";
+            vsShowButtons.push_back(s1);
+            vsShowButtons.push_back(s2);
+            vsShowButtons.push_back(s3);
+            vsShowButtons.push_back(s4);
+            vsShowButtons.push_back(s5);
+            vsShowButtons.push_back(s6);
+            vsShowButtons.push_back(s7);
+            vsShowButtons.push_back(s8);
+            emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
+            disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
+
+            // 将显示图像窗口打开
+            // 关闭窗口应将内存释放！！！！
+            Form *openimgMul = new Form(this);
+
+            vfOpenImg.push_back(openimgMul);
+            //m_openimg = openimgMul;
+            connect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimgMul,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
+            cv::Mat rgb;
+
+            if (3 == image.channels())
+            {
+                m_ImgInfor.sPath = name;
+                m_ImgInfor.nWidth = image.rows;
+                m_ImgInfor.nHeight = image.cols;
+                m_ImgInfor.sColorSpace = "3RGB";
+                cvtColor(image,rgb,CV_BGR2RGB);
+                emit sendImgCenter(rgb, m_ImgInfor);
+            }
+            else if (4 == image.channels())
+            {
+                m_ImgInfor.sPath = name;
+                m_ImgInfor.nWidth = image.rows;
+                m_ImgInfor.nHeight = image.cols;
+                m_ImgInfor.sColorSpace = "4RGB";
+                emit sendImgCenter(image, m_ImgInfor);
+            }
+            else if (2 == image.depth())
+            {
+                m_ImgInfor.sPath = name;
+                m_ImgInfor.nWidth = image.rows;
+                m_ImgInfor.nHeight = image.cols;
+                m_ImgInfor.sColorSpace = "2GRAY";
+                emit sendImgCenter(image, m_ImgInfor);
+            }
+            else if (1 == image.channels())
+            {
+                m_ImgInfor.sPath = name;
+                m_ImgInfor.nWidth = image.rows;
+                m_ImgInfor.nHeight = image.cols;
+                m_ImgInfor.sColorSpace = "1GRAY";
+                emit sendImgCenter(image, m_ImgInfor);
+            }
+            disconnect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimgMul,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
+            openimgMul->show();
+        }
+    }
+    /*
     //如果同时拖入了多个资源，只选择第一个
     QString fileName = urlList.at(0).toLocalFile();
     if(fileName.isEmpty())
@@ -191,11 +271,15 @@ void CentralWidget::dropEvent(QDropEvent *event)
         disconnect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
         openimg->show();
     }
+    */
 }
 void CentralWidget::dragMoveEvent(QDragMoveEvent *event)
 {
     event->acceptProposedAction();
 }
+
+
+
 
 void CentralWidget::OpenNew(cv::Mat image, INFOR_BASE::sImgInfor imginfor)
 {
@@ -393,6 +477,25 @@ void CentralWidget::Median_7_7Slot()
     connect(this, SIGNAL(sendMedian_7_7Slot()), m_openimg, SLOT(Median_7_7Slot()));
     emit sendMedian_7_7Slot();
 }
+void CentralWidget::GaussianSlot()
+{
+    connect(this, SIGNAL(sendGaussianSlot()), m_openimg, SLOT(ManualGaussianSlot()));
+    emit sendGaussianSlot();
+    disconnect(this, SIGNAL(sendGaussianSlot()), m_openimg, SLOT(ManualGaussianSlot()));
+}
+void CentralWidget::LaplaceSlot()
+{
+    connect(this, SIGNAL(sendLaplaceSlot()), m_openimg, SLOT(ManualLaplaceSlot()));
+    emit sendLaplaceSlot();
+    disconnect(this, SIGNAL(sendLaplaceSlot()), m_openimg, SLOT(ManualLaplaceSlot()));
+}
+void CentralWidget::Connected_RegionSlot()
+{
+    connect(this, SIGNAL(sendConnected_RegionSlot()), m_openimg, SLOT(Connected_RegionSlot()));
+    emit sendConnected_RegionSlot();
+    disconnect(this, SIGNAL(sendConnected_RegionSlot()), m_openimg, SLOT(Connected_RegionSlot()));
+}
+
 void CentralWidget::ButtonShowManageCloseGraySlot(std::vector<std::string> vsShowButtons, std::vector<std::string> vsCloseButtons)
 {
     connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
@@ -414,4 +517,9 @@ void CentralWidget::CloseImgWindowFromFormSlot()
 {
     qDebug("cllse");
     openimg->close();
+}
+void CentralWidget::ReceiveFormSelfSlot(Form * pFormObj)
+{
+    m_openimg = pFormObj;
+
 }

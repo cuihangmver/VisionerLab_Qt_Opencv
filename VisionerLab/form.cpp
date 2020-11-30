@@ -6,6 +6,7 @@ Form::Form(QWidget *parent) :
     ui(new Ui::Form)
 {
     ui->setupUi(this);
+    QWidget::installEventFilter(this);
     m_parentCopy = parent;
     // 给dialog增加最大化最小化
     Qt::WindowFlags flags = Qt::Dialog;
@@ -23,6 +24,7 @@ Form::Form(QWidget *parent) :
     m_dScaling = 1.0;
     m_bCtrlPress = false;
     m_bModifyImg = false;
+    vmStackBack.clear();
 }
 
 Form::~Form()
@@ -209,6 +211,7 @@ void Form::DisplayMat(cv::Mat mimage, QLabel *label, double dScaling)
     //}
     //else
     //{
+
     cv::Mat image;
     if(mimage.depth() == 2)
     {
@@ -263,14 +266,9 @@ void Form::getImgCenter(cv::Mat mImg, INFOR_BASE::sImgInfor imgInfor)
     m_mImg = mImg.clone();
     m_imgInfor = imgInfor;
     /*layout布局*/
-    //pb=new QPushButton("放大");
-    //pb1=new QPushButton("缩小");
-    //pb2=new QPushButton("恢复");
-    //pg = new QHBoxLayout;
+
     pv = new QVBoxLayout;
-    //pg->addWidget(pb);
-   //pg->addWidget(pb1);
-    //pg->addWidget(pb2);
+
     // 设置滚动条相关
     scrollArea->setWidget(m_label);
     scrollArea->setGeometry(0,0,m_label->width()+100,m_label->height()-60);
@@ -284,6 +282,7 @@ void Form::getImgCenter(cv::Mat mImg, INFOR_BASE::sImgInfor imgInfor)
     // 设置qlabel相关
     m_label->setStyleSheet("border:1px solid black;");
     // 设置鼠标移动相应
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
     // 这两个控件都要相应鼠标事件
     m_label->setMouseTracking(true);
@@ -371,13 +370,36 @@ void Form::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
-void Form::keyPressEvent(QKeyEvent *ev)
+void Form::keyPressEvent(QKeyEvent *event)
 {
-    if(ev->modifiers() == Qt::ControlModifier)
+    if(event->modifiers() == Qt::ControlModifier)
     {
        m_bCtrlPress = true;
        scrollArea->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     }
+    if ((event->modifiers() == Qt::ControlModifier) && (event->key() == Qt::Key_Z))
+    {
+        if(vmStackBack.size() > 1)
+        {
+            vmStackFront.push_back(vmStackBack[vmStackBack.size()-1].clone());
+            vmStackBack.erase(vmStackBack.begin()+vmStackBack.size()-1);
+            m_mImg = vmStackBack[vmStackBack.size() - 1].clone();
+            DisplayMat(m_mImg, m_label, m_dScaling);
+
+        }
+    }
+
+    if ((event->modifiers() == Qt::ControlModifier) && (event->key() == Qt::Key_A))
+    {
+        if(0 != vmStackFront.size())
+        {
+            vmStackBack.push_back(vmStackFront[vmStackFront.size()-1].clone());
+            vmStackFront.erase(vmStackFront.begin()+vmStackFront.size()-1);
+            m_mImg = vmStackBack[vmStackBack.size() - 1].clone();
+            DisplayMat(m_mImg, m_label, m_dScaling);
+        }
+    }
+
 }
 
 void Form::keyReleaseEvent(QKeyEvent *ev)
@@ -438,6 +460,25 @@ void Form::closeEvent(QCloseEvent *event) //根据不同的需求进行添加，
     }
 }
 
+bool Form::eventFilter(QObject *watched, QEvent *event)
+{
+    if( watched == this )
+    {
+        //窗口停用，变为不活动的窗口
+        if(QEvent::WindowActivate == event->type())
+        {
+            connect(this, SIGNAL(sendFormSelf(Form *)),m_parentCopy,SLOT(ReceiveFormSelfSlot(Form *)));
+            emit sendFormSelf(this);
+            return true ;
+        }
+        else
+        {
+            return false ;
+        }
+    }
+    return false ;
+}
+
 // 导航栏保存关闭操作
 void Form::closeEventSlot()
 {
@@ -470,6 +511,8 @@ void Form::closeEventSaveAsSlot()
     doFileSave();
 }
 
+
+
 void Form::doFileSave()
 {
     QString dirPath = QFileDialog::getSaveFileName(NULL, QStringLiteral("ImageSaveAs"), "good.png", QString(tr("Images (*.png *.bmp *.jpg  *.gif *.jpeg)")),
@@ -500,6 +543,8 @@ void Form::RGB2Gray()
     {
         cv::cvtColor(m_mImg,m_mImg,CV_RGBA2GRAY);
     }
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 
@@ -510,6 +555,8 @@ void Form::Gray2RGB()
     {
         cv::cvtColor(m_mImg,m_mImg,CV_GRAY2RGB);
     }
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 
@@ -540,6 +587,8 @@ void Form::ThresholdOtusSlot()
 {
     m_bModifyImg = true;
     cv::threshold(m_mImg, m_mImg, 0, 255, CV_THRESH_OTSU);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 
@@ -554,6 +603,8 @@ void Form::ThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, in
 {
     m_bModifyImg = true;
     m_mImg = m_mTem.clone();
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 void Form::PreviewThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC)
@@ -567,6 +618,8 @@ void Form::EqualizationSlot()
 {
     m_bModifyImg = true;
     cv::equalizeHist(m_mImg, m_mImg);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 
@@ -578,6 +631,8 @@ void Form::SobelSlot()
     // 参数4 = 0，参数5 = 1，表示y方向的导数，水平方向边缘
     // 参数6为卷积核大小，当为1时，表示1*3或3*1
     cv::Sobel(m_mImg, m_mImg, -1, 0, 1, 3);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 
@@ -589,6 +644,8 @@ void Form::Scharr_3_3Slot()
     // 参数4 = 0，参数5 = 1，表示y方向的导数，水平方向边缘
     // 参数6为卷积核大小，当为1时，表示1*3或3*1
     cv::Scharr(m_mImg, m_mImg, -1, 0, 1, 3);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 
@@ -596,6 +653,8 @@ void Form::Laplacian_5_5Slot()
 {
     m_bModifyImg = true;
     cv::Laplacian(m_mImg, m_mImg, -1, 5, 1, 0, cv::BORDER_DEFAULT);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 
@@ -603,24 +662,32 @@ void Form::Laplacian_7_7Slot()
 {
     m_bModifyImg = true;
     cv::Laplacian(m_mImg, m_mImg, -1, 7, 1, 0, cv::BORDER_DEFAULT);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 void Form::Gaussian_3_3Slot()
 {
     m_bModifyImg = true;
     cv::GaussianBlur(m_mImg, m_mImg, cv::Size(3, 3), 3, 3);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 void Form::Gaussian_5_5Slot()
 {
     m_bModifyImg = true;
     cv::GaussianBlur(m_mImg, m_mImg, cv::Size(5, 5), 3, 3);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 void Form::Gaussian_7_7Slot()
 {
     m_bModifyImg = true;
     cv::GaussianBlur(m_mImg, m_mImg, cv::Size(7, 7), 3, 3);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 
@@ -628,49 +695,230 @@ void Form::Mean_3_3Slot()
 {
     m_bModifyImg = true;
     blur(m_mImg,m_mImg, cv::Size(3,3));
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 void Form::Mean_5_5Slot()
 {
     m_bModifyImg = true;
     blur(m_mImg,m_mImg, cv::Size(5,5));
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 void Form::Mean_7_7Slot()
 {
     m_bModifyImg = true;
     blur(m_mImg,m_mImg, cv::Size(7,7));
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 void Form::Median_3_3Slot()
 {
     m_bModifyImg = true;
     medianBlur(m_mImg,m_mImg, 3);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 void Form::Median_5_5Slot()
 {
     m_bModifyImg = true;
     medianBlur(m_mImg,m_mImg, 5);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
 void Form::Median_7_7Slot()
 {
     m_bModifyImg = true;
     medianBlur(m_mImg,m_mImg, 7);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }
-void Form::OKSelectImg()
+
+void Form::ManualGaussianSlot()
+{
+    m_bModifyImg = true;
+    m_pGaussianDialog = new GaussianDialog(this);
+    m_pGaussianDialog->setModal(true);
+    m_pGaussianDialog->show();
+}
+void Form::ManualGaussianChangeSlot(int nValue)
+{
+    if(nValue % 2 != 1)
+    {
+        nValue += 1;
+    }
+    m_bModifyImg = true;
+    cv::GaussianBlur(m_mImg, m_mTem, cv::Size(nValue, nValue), 3, 3);
+    DisplayMat(m_mTem, m_label, m_dScaling);
+}
+
+void Form::ManualLaplaceSlot()
+{
+    m_bModifyImg = true;
+    m_pLaplaceDialog = new Laplace(this);
+    m_pLaplaceDialog->setModal(true);
+    m_pLaplaceDialog->show();
+}
+void Form::ManualLaplaceChangeSlot(int nValue)
+{
+    if(nValue % 2 != 1)
+    {
+        nValue += 1;
+    }
+    m_bModifyImg = true;
+    cv::Laplacian(m_mImg, m_mTem, -1, nValue, 1, 0, cv::BORDER_DEFAULT);
+
+
+    DisplayMat(m_mTem, m_label, m_dScaling);
+}
+
+void Form::Connected_RegionSlot()
+{
+    m_bModifyImg = true;
+    cv::Mat mLabel1, mStats1, mCentroids1;
+    int nRegionMax = 0;
+    int nRegion8 = cv::connectedComponentsWithStats(m_mImg, mLabel1, mStats1, mCentroids1, 8);
+
+    for(int i = 0; i < nRegion8; i++)
+    {
+        int nArea = mStats1.at<int>(i, cv::CC_STAT_AREA);
+        if( nArea > nRegionMax)
+        {
+            nRegionMax = nArea;
+        }
+    }
+    cv::Mat mLabel2, mStats2, mCentroids2;
+    int nRegion4 = cv::connectedComponentsWithStats(m_mImg, mLabel2, mStats2, mCentroids2, 4);
+    for(int i = 0; i < nRegion4; i++)
+    {
+        int nArea = mStats2.at<int>(i, cv::CC_STAT_AREA);
+        if( nArea > nRegionMax)
+        {
+            nRegionMax = nArea;
+        }
+    }
+    nRegionMax = nRegionMax * m_dScaling;
+
+    m_pConnectedRegionDialog = new ConnectedRegion(this, nRegionMax);
+    m_pConnectedRegionDialog->setModal(true);
+    m_pConnectedRegionDialog->show();
+}
+void Form::ManualConnected_RegionSlot(int nValue, int ConnectedRegion48)
+{
+
+    if(ConnectedRegion48 != 4 || ConnectedRegion48 != 8)
+    {
+        ConnectedRegion48 = 4;
+    }
+
+    m_bModifyImg = true;
+    cv::Mat mLabel, mStats, mCentroids;
+    int nRegion = cv::connectedComponentsWithStats(m_mImg, mLabel, mStats, mCentroids, ConnectedRegion48);
+
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
+    std::vector<cv::Vec3b> v3bColors;
+
+    for(int i = 0; i < nRegion; i++)
+    {
+        cv::Vec3b vColor;
+        if(0 == i || nValue > mStats.at<int>(i, cv::CC_STAT_AREA) )
+        {
+            vColor = cv::Vec3b(0,0,0);
+        }
+        else
+        {
+            vColor = cv::Vec3b(rand()%256, rand()%256, rand()%256);
+        }
+        v3bColors.push_back(vColor);
+    }
+
+    cv::Mat mTem = cv::Mat::zeros(m_mImg.size(), CV_8UC3);
+    m_mTem = cv::Mat::zeros(m_mImg.size(), CV_8UC1);
+    for(int nHeight = 0; nHeight < mTem.rows; nHeight++)
+    {
+        for(int nWidth = 0; nWidth < mTem.cols; nWidth++)
+        {
+             int nLabel = mLabel.at<int>(nHeight, nWidth);
+             mTem.at<cv::Vec3b>(nHeight, nWidth) = v3bColors[nLabel];
+             if(cv::Vec3b(0,0,0) != v3bColors[nLabel])
+             {
+                 m_mTem.at<uchar>(nHeight, nWidth) = 255;
+             }
+
+        }
+    }
+
+    DisplayMat(mTem, m_label, m_dScaling);
+}
+
+void Form::OKThresholdSliderSelectImg()
 {
     m_bModifyImg = true;
     m_mImg = m_mTem.clone();
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
     // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
     m_dialogSlider->close();
 }
-void Form::CancelSelectImg()
+void Form::CancelThresholdSliderSelectImg()
 {
     m_bModifyImg = true;
     DisplayMat(m_mImg, m_label, m_dScaling);
     m_dialogSlider->close();
+}
+void Form::OKGaussianSliderSelectImg()
+{
+    m_bModifyImg = true;
+    m_mImg = m_mTem.clone();
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
+    m_pGaussianDialog->close();
+}
+void Form::CancelGaussianSliderSelectImg()
+{
+    m_bModifyImg = true;
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    m_pGaussianDialog->close();
+}
+void Form::OKLaplaceSliderSelectImg()
+{
+    m_bModifyImg = true;
+    m_mImg = m_mTem.clone();
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
+    m_pLaplaceDialog->close();
+}
+void Form::CancelLaplaceSliderSelectImg()
+{
+    m_bModifyImg = true;
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    m_pLaplaceDialog->close();
+}
+void Form::OKConnected_RegionSliderSelectImg()
+{
+    m_bModifyImg = true;
+    m_mImg = m_mTem.clone();
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
+    m_pConnectedRegionDialog->close();
+}
+void Form::CancelConnected_RegionSliderSelectImg()
+{
+    m_bModifyImg = true;
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    m_pConnectedRegionDialog->close();
 }

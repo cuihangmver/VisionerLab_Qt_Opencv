@@ -70,8 +70,8 @@ DialogSlider::DialogSlider(QWidget *parent, int nDepth) :
     button = new QDialogButtonBox(parent);
     button->addButton( "OK", QDialogButtonBox::YesRole);
     button->addButton( "NO", QDialogButtonBox::NoRole);
-    connect(button, SIGNAL(accepted()), parent, SLOT(OKSelectImg()));
-    connect(button, SIGNAL(rejected()), parent, SLOT(CancelSelectImg()));
+    connect(button, SIGNAL(accepted()), parent, SLOT(OKThresholdSliderSelectImg()));
+    connect(button, SIGNAL(rejected()), parent, SLOT(CancelThresholdSliderSelectImg()));
 
     qSliderHor4->addWidget(button);
 

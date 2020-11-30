@@ -34,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionMedian_3_3, SIGNAL(triggered()), c,SLOT(Median_3_3Slot()));
     connect(ui->actionMedian_5_5, SIGNAL(triggered()), c,SLOT(Median_5_5Slot()));
     connect(ui->actionMedian_7_7, SIGNAL(triggered()), c,SLOT(Median_7_7Slot()));
+    connect(ui->actionGaussian, SIGNAL(triggered()), c,SLOT(GaussianSlot()));
+    connect(ui->actionLaplace, SIGNAL(triggered()), c,SLOT(LaplaceSlot()));
+    connect(ui->actionConnected_Region, SIGNAL(triggered()), c,SLOT(Connected_RegionSlot()));
     initButton(ui);
     m_ui = ui;
     m_parent = parent;

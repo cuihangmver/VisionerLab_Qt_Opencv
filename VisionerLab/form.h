@@ -17,6 +17,9 @@
 #include "inforbase.h"
 #include "dialogslider.h"
 #include "adaptivedialog.h"
+#include "gaussiandialog.h"
+#include "laplace.h"
+#include "connectedregion.h"
 #include <QTime>
 
 namespace Ui {
@@ -48,6 +51,7 @@ protected:
     void keyPressEvent(QKeyEvent *ev);
     void keyReleaseEvent(QKeyEvent *ev);
     void closeEvent(QCloseEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event);
 private:
     Ui::Form *ui;
     QWidget *m_parentCopy;
@@ -62,9 +66,14 @@ private:
     bool m_bModifyImg;
     DialogSlider *m_dialogSlider;
     AdaptiveDialog *m_pAdaptiveDialog;
+    GaussianDialog *m_pGaussianDialog;
+    Laplace *m_pLaplaceDialog;
+    ConnectedRegion *m_pConnectedRegionDialog;
     QHBoxLayout *pg;
     QVBoxLayout *pv;
     QPushButton *pb,*pb1,*pb2;
+    std::vector<cv::Mat> vmStackBack;
+    std::vector<cv::Mat> vmStackFront;
 private slots:
     // 槽函数
     // 接收主窗口的值
@@ -73,8 +82,12 @@ private slots:
     void closeEventSlot();
     void closeEventSaveAsSlot();
     // 接收子窗口数值
-    void OKSelectImg();
-    void CancelSelectImg();
+    void OKThresholdSliderSelectImg();
+    void CancelThresholdSliderSelectImg();
+    void OKGaussianSliderSelectImg();
+    void CancelGaussianSliderSelectImg();
+    void OKLaplaceSliderSelectImg();
+    void CancelLaplaceSliderSelectImg();
     // 图像处理槽函数
     void RGB2Gray();
     void Gray2RGB();
@@ -98,13 +111,21 @@ private slots:
     void Median_7_7Slot();
     void ThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC);
     void PreviewThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC);
-
+    void ManualGaussianSlot();
+    void ManualGaussianChangeSlot(int nValue);
+    void ManualLaplaceSlot();
+    void ManualLaplaceChangeSlot(int nValue);
+    void Connected_RegionSlot();
+    void ManualConnected_RegionSlot(int nValue,int ConnectedRegion48);
+    void OKConnected_RegionSliderSelectImg();
+    void CancelConnected_RegionSliderSelectImg();
 signals:
     // 信号函数
     void sendMouse(int, int, QColor, int );
     void sendMouseDepth(int, int, ushort, int );
     void sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>);
     void sendCloseImgWindow();
+    void sendFormSelf(Form *);
 };
 
 #endif // FORM_H

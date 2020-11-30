@@ -36,7 +36,9 @@ SOURCES += \
     centralwidget.cpp \
     dialogslider.cpp \
     adaptivedialog.cpp \
-    gaussiandialog.cpp
+    gaussiandialog.cpp \
+    laplace.cpp \
+    connectedregion.cpp
 
 # opencv3.4.0
 INCLUDEPATH += E:/ProfessionalSoftware/QT/opencv/opencv/build/include \
@@ -51,7 +53,9 @@ HEADERS += \
     centralwidget.h \
     dialogslider.h \
     adaptivedialog.h \
-    gaussiandialog.h
+    gaussiandialog.h \
+    laplace.h \
+    connectedregion.h
 
 FORMS += \
         mainwindow.ui \
@@ -59,7 +63,9 @@ FORMS += \
     centralwidget.ui \
     dialogslider.ui \
     adaptivedialog.ui \
-    gaussiandialog.ui
+    gaussiandialog.ui \
+    laplace.ui \
+    connectedregion.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

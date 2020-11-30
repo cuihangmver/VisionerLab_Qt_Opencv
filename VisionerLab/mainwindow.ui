@@ -105,6 +105,26 @@
       <addaction name="actionMedian_7_7"/>
      </widget>
      <addaction name="menuConvolve_Kernel"/>
+     <addaction name="actionGaussian"/>
+     <addaction name="actionLaplace"/>
+     <addaction name="actionMean"/>
+     <addaction name="actionMedian"/>
+     <addaction name="separator"/>
+     <addaction name="actionLocal_Min"/>
+     <addaction name="actionLocal_Max"/>
+    </widget>
+    <widget class="QMenu" name="menuMorphology">
+     <property name="title">
+      <string>Morphology</string>
+     </property>
+     <addaction name="actionErode"/>
+     <addaction name="actionDilate"/>
+    </widget>
+    <widget class="QMenu" name="menuSegmentation">
+     <property name="title">
+      <string>Segmentation</string>
+     </property>
+     <addaction name="actionConnected_Region"/>
     </widget>
     <addaction name="actionSize"/>
     <addaction name="actionGeometric"/>
@@ -113,6 +133,9 @@
     <addaction name="menuThreshold"/>
     <addaction name="menuHistogram"/>
     <addaction name="menuFilter"/>
+    <addaction name="menuMorphology"/>
+    <addaction name="actionAffine_Transformation"/>
+    <addaction name="menuSegmentation"/>
    </widget>
    <widget class="QMenu" name="menuAnalyze">
     <property name="title">
@@ -331,6 +354,56 @@
   <action name="actionMedian_7_7">
    <property name="text">
     <string>Median 7*7</string>
+   </property>
+  </action>
+  <action name="actionGaussian">
+   <property name="text">
+    <string>Gaussian</string>
+   </property>
+  </action>
+  <action name="actionLaplace">
+   <property name="text">
+    <string>Laplace</string>
+   </property>
+  </action>
+  <action name="actionAffine_Transformation">
+   <property name="text">
+    <string>Affine Transformation</string>
+   </property>
+  </action>
+  <action name="actionMean">
+   <property name="text">
+    <string>Mean</string>
+   </property>
+  </action>
+  <action name="actionMedian">
+   <property name="text">
+    <string>Median</string>
+   </property>
+  </action>
+  <action name="actionLocal_Min">
+   <property name="text">
+    <string>Local Min</string>
+   </property>
+  </action>
+  <action name="actionLocal_Max">
+   <property name="text">
+    <string>Local Max</string>
+   </property>
+  </action>
+  <action name="actionErode">
+   <property name="text">
+    <string>Erode</string>
+   </property>
+  </action>
+  <action name="actionDilate">
+   <property name="text">
+    <string>Dilate</string>
+   </property>
+  </action>
+  <action name="actionConnected_Region">
+   <property name="text">
+    <string>Connected Region</string>
    </property>
   </action>
  </widget>

@@ -28,6 +28,7 @@ protected:
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
     void dragMoveEvent(QDragMoveEvent *event);
+
 private:
     Ui::CentralWidget *ui;
     INFOR_BASE::sImgInfor m_ImgInfor;
@@ -42,6 +43,7 @@ private:
     QPushButton *btn2;
     QPushButton *btn3;
     Form *openimg;
+    std::vector<Form*> vfOpenImg;
 private slots:
     void getMouse(int nMouseX, int nMouseY, QColor color, int nChannel);
     void getMouseDepth(int nMouseX, int nMouseY, ushort uPixel, int nChannel);
@@ -71,6 +73,10 @@ private slots:
     void ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>);
     void CloseImgWindowSlot();
     void CloseImgWindowFromFormSlot();
+    void ReceiveFormSelfSlot(Form *);
+    void GaussianSlot();
+    void LaplaceSlot();
+    void Connected_RegionSlot();
     // 定义信号，可以与子窗口进行通信
 signals:
     void sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor);
@@ -97,6 +103,9 @@ signals:
     void sendMedian_5_5Slot();
     void sendMedian_7_7Slot();
     void sendCloseImgWindow();
+    void sendGaussianSlot();
+    void sendLaplaceSlot();
+    void sendConnected_RegionSlot();
 };
 
 #endif // CENTRALWIDGET_H
