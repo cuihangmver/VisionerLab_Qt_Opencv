@@ -1,5 +1,5 @@
 # VisionerLab_Qt_Opencv
- 本项目是一个可视化处理图像的软件（ImageProcessingTool），其基本功能模仿ImLab进行开发，GUI框架基于qt,底层视觉处理算法基于OpenCv。
+ 本项目是一个可视化处理图像的软件（ImageProcessingTool），GUI框架基于qt,底层视觉处理算法基于OpenCv。
  ## 安装环境
  目前该版本是在Win10下进行开发的，以后陆续会发布Linux、Mac OS版本;  
  Windows10 可执行程序 [VisionerLab.exe](https://github.com/cuihangmver/VisionerLab_Qt_Opencv/blob/main/VisionerLab.rar)
