@@ -10,11 +10,18 @@
 #include <QTextCodec>
 #include "form.h"
 #include <QMimeData>
+#include "formnotvisualized.h"
+#include "cstructuredlightcalibration.h"
+#include "ccalibration.h"
 
 namespace Ui {
 class CentralWidget;
 }
-
+typedef struct S_FORM
+{
+    int id;
+    Form *form;
+}S_FORM;
 class CentralWidget : public QWidget
 {
     Q_OBJECT
@@ -36,6 +43,8 @@ private:
     QWidget *m_parentCopy;
     QTextEdit *m_textedit;
     Form *m_openimg;
+    CStructuredLightCalibration *m_pCStructLightObj;
+    CCalibration *m_pCalibrationObj;
 
     QHBoxLayout *qButtonHor;
     QVBoxLayout *qButtonVer;
@@ -43,7 +52,8 @@ private:
     QPushButton *btn2;
     QPushButton *btn3;
     Form *openimg;
-    std::vector<Form*> vfOpenImg;
+    std::vector<S_FORM> vForm;
+    int m_nId;
 private slots:
     void getMouse(int nMouseX, int nMouseY, QColor color, int nChannel);
     void getMouseDepth(int nMouseX, int nMouseY, ushort uPixel, int nChannel);
@@ -71,15 +81,29 @@ private slots:
     void Median_7_7Slot();
     void ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>);
     void ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>);
-    void CloseImgWindowSlot();
-    void CloseImgWindowFromFormSlot();
+    void CloseImgWindowFromFormSlot(int );
     void ReceiveFormSelfSlot(Form *);
     void GaussianSlot();
     void LaplaceSlot();
     void Connected_RegionSlot();
+    void ErodeSlot();
+    void DilateSlot();
+    void OpenSlot();
+    void CloseSlot();
+
+    void Hit_MissSlot();
+    void Top_HatSlot();
+    void Black_HatSlot();
+
+    void Structured_LightSlot();
+    void Structured_LightParamSlot
+    (
+            std::string sPath, cv::Point pWidthHeight,
+            double dPerMove, double dDis2Line, double dC
+    );
     // 定义信号，可以与子窗口进行通信
 signals:
-    void sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor);
+    void sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor, int);
     void sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>);
     void sendRGB2Gray();
     void sendGray2RGB();
@@ -106,6 +130,15 @@ signals:
     void sendGaussianSlot();
     void sendLaplaceSlot();
     void sendConnected_RegionSlot();
+    void sendErodeSlot();
+    void sendDilateSlot();
+    void sendOpenSlot();
+    void sendCloseSlot();
+    void sendHit_MissSlot();
+    void sendTop_HatSlot();
+    void sendBlack_HatSlot();
+    void sendStructured_LightSlot();
+    void sendUpdateAllSlot();
 };
 
 #endif // CENTRALWIDGET_H

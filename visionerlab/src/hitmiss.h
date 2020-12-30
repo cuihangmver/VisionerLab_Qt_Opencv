@@ -1,5 +1,5 @@
-#ifndef LAPLACE_H
-#define LAPLACE_H
+#ifndef HITMISS_H
+#define HITMISS_H
 
 #include <QDialog>
 #include <QSpinBox>
@@ -8,21 +8,23 @@
 #include <QLabel>
 #include <QDialogButtonBox>
 #include <opencv2/opencv.hpp>
+#include <QComboBox>
+
 namespace Ui {
-class Laplace;
+class HitMiss;
 }
 
-class Laplace : public QDialog
+class HitMiss : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit Laplace(QWidget *parent = nullptr);
-    ~Laplace();
+    explicit HitMiss(QWidget *parent = nullptr);
+    ~HitMiss();
 public:
     void ManualThresholdChangeSlot(int nValue);
 private:
-    Ui::Laplace *ui;
+    Ui::HitMiss *ui;
     QWidget *m_parent;
     QSpinBox *m_pSpinBox;
     QSlider *m_pSlider;
@@ -30,13 +32,22 @@ private:
     QVBoxLayout *m_qButtonVer;
     QHBoxLayout *m_qSliderHor1;
     QHBoxLayout *m_qSliderHor2;
+    QHBoxLayout *m_qSliderHor3;
     QDialogButtonBox *button;
-private:
-    void closeEvent(QCloseEvent *event);
+
+    QLabel *pLabel1;
+    QLabel *pLabel2;
+    QLabel *pLabel3;
+    QString m_StructureType;
+    QComboBox *pComboBox1;
+
 private slots:
-    void ManualLaplaceChangeSlot(int );
+    void ManualHitMissChangeSlot(int );
+    void SetStructureType(QString);
 signals:
-    void sendManualLaplaceChange(int );
+    void sendManualHitMissChange(int ,QString);
+private:
+
 };
 
-#endif // LAPLACE_H
+#endif // HITMISS_H

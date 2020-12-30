@@ -42,11 +42,10 @@ public:
     // 自定义函数
     // 显示图像
     void MainWindow::initButton(Ui::MainWindow *ui);
-    void MainWindow::openButton(Ui::MainWindow *ui);
+    // void MainWindow::openButton(Ui::MainWindow *ui);
     void getCentralWidget(CentralWidget *cenwidget);
 private:
-    // 事件相应函数
-    void closeEvent(QCloseEvent *event);
+
 private slots:
     // 槽函数
     void on_actionOpen_triggered();

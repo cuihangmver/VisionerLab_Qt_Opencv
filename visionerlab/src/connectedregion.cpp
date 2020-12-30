@@ -69,18 +69,7 @@ ConnectedRegion::ConnectedRegion(QWidget *parent, int nRegion) :
 
 ConnectedRegion::~ConnectedRegion()
 {
-    delete pLabel1;
-    delete pComboBox1;
-    delete m_parent;
-    delete m_pSpinBox;
-    delete m_pSlider;
-    delete m_pLabel;
-    delete m_qButtonVer;
-    delete m_qSliderHor1;
-    delete m_qSliderHor2;
-    delete m_qSliderHor3;
-    delete button;
-    delete ui;
+
 }
 void ConnectedRegion::ManualConnectedRegionChangeSlot(int nValue)
 {
@@ -93,4 +82,7 @@ void ConnectedRegion::SetConnectedComponents48Slot(QString sConnectedComponents4
 {
     m_nConnectedComponents48Value = sConnectedComponents48Value.toInt();
 }
-
+void ConnectedRegion::closeEvent(QCloseEvent *event)
+{
+    this->close();
+}

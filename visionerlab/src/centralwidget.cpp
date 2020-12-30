@@ -6,11 +6,12 @@ CentralWidget::CentralWidget(QWidget *parent) :
     ui(new Ui::CentralWidget)
 {
     ui->setupUi(this);
+    // 允许拖拽放入
     this->setAcceptDrops(true);
 }
 CentralWidget::CentralWidget(int a, QWidget *parent)
 {
-    vfOpenImg.clear();
+    vForm.clear();
     m_parentCopy = parent;
     m_textedit = new QTextEdit();
     // 对主界面进行布局
@@ -28,11 +29,13 @@ CentralWidget::CentralWidget(int a, QWidget *parent)
     qButtonVer->addWidget(m_textedit);
     this->setLayout(qButtonVer);
     this->resize(500,500);
+    m_nId = 0;
     this->show();
 }
 
 CentralWidget::~CentralWidget()
 {
+    /*
     if(nullptr != btn1)
     {
         delete btn1;
@@ -73,6 +76,7 @@ CentralWidget::~CentralWidget()
         delete ui;
         ui = nullptr;
     }
+    */
 }
 
 void CentralWidget::dragEnterEvent(QDragEnterEvent *event)
@@ -89,8 +93,7 @@ void CentralWidget::dragEnterEvent(QDragEnterEvent *event)
 
 void CentralWidget::dropEvent(QDropEvent *event)
 {
-    const QMimeData *mimeData = event->mimeData();
-
+    const QMimeData *mimeData = event->mimeData(); 
     if(!mimeData->hasUrls())
     {
         return;
@@ -117,8 +120,9 @@ void CentralWidget::dropEvent(QDropEvent *event)
         }
         else
         {
-            // 将灰色按钮打开
+
             connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
+            // 打开导航栏中的按钮
             std::vector<std::string> vsShowButtons;
             std::vector<std::string> vsCloseButtons;
             std::string s1 = "actionRGB";
@@ -128,7 +132,20 @@ void CentralWidget::dropEvent(QDropEvent *event)
             std::string s5 = "actionsave_2";
             std::string s6 = "actionBinary";
             std::string s7 = "actionManual";
-            std::string s8 = "menuConvolve_Kernel";
+            std::string s8 = "actionOtus";
+            std::string s9 = "actionAdaptive";
+            std::string s10 = "actionEqualization";
+            std::string s11 = "menuConvolve_Kernel";
+            std::string s12 = "actionGaussian";
+            std::string s13 = "actionLaplace";
+            std::string s14 = "actionConnected_Region";
+            std::string s15 = "actionErode";
+            std::string s16 = "actionDilate";
+            std::string s17 = "actionOpen_2";
+            std::string s18 = "actionClose_2";
+            std::string s19 = "actionHit_Miss";
+            std::string s20 = "actionTop_Hat";
+            std::string s21 = "actionBlack_Hat";
             vsShowButtons.push_back(s1);
             vsShowButtons.push_back(s2);
             vsShowButtons.push_back(s3);
@@ -137,18 +154,35 @@ void CentralWidget::dropEvent(QDropEvent *event)
             vsShowButtons.push_back(s6);
             vsShowButtons.push_back(s7);
             vsShowButtons.push_back(s8);
+            vsShowButtons.push_back(s9);
+            vsShowButtons.push_back(s10);
+            vsShowButtons.push_back(s11);
+            vsShowButtons.push_back(s12);
+            vsShowButtons.push_back(s13);
+            vsShowButtons.push_back(s14);
+            vsShowButtons.push_back(s15);
+            vsShowButtons.push_back(s16);
+            vsShowButtons.push_back(s17);
+            vsShowButtons.push_back(s18);
+            vsShowButtons.push_back(s19);
+            vsShowButtons.push_back(s20);
+            vsShowButtons.push_back(s21);
             emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
             disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
+
 
             // 将显示图像窗口打开
             // 关闭窗口应将内存释放！！！！
             Form *openimgMul = new Form(this);
-
-            vfOpenImg.push_back(openimgMul);
-            //m_openimg = openimgMul;
-            connect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimgMul,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
+            openimgMul->setAttribute(Qt::WA_DeleteOnClose);
+            S_FORM sForm;
+            sForm.id = m_nId;
+            m_nId++;
+            sForm.form = openimgMul;
+            //vForm.push_back(sForm);
+            m_openimg = openimgMul;
+            connect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor, int)),openimgMul,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor, int)));
             cv::Mat rgb;
-
             if (3 == image.channels())
             {
                 m_ImgInfor.sPath = name;
@@ -156,7 +190,7 @@ void CentralWidget::dropEvent(QDropEvent *event)
                 m_ImgInfor.nHeight = image.cols;
                 m_ImgInfor.sColorSpace = "3RGB";
                 cvtColor(image,rgb,CV_BGR2RGB);
-                emit sendImgCenter(rgb, m_ImgInfor);
+                emit sendImgCenter(rgb, m_ImgInfor, m_nId);
             }
             else if (4 == image.channels())
             {
@@ -164,7 +198,7 @@ void CentralWidget::dropEvent(QDropEvent *event)
                 m_ImgInfor.nWidth = image.rows;
                 m_ImgInfor.nHeight = image.cols;
                 m_ImgInfor.sColorSpace = "4RGB";
-                emit sendImgCenter(image, m_ImgInfor);
+                emit sendImgCenter(image, m_ImgInfor, m_nId);
             }
             else if (2 == image.depth())
             {
@@ -172,7 +206,7 @@ void CentralWidget::dropEvent(QDropEvent *event)
                 m_ImgInfor.nWidth = image.rows;
                 m_ImgInfor.nHeight = image.cols;
                 m_ImgInfor.sColorSpace = "2GRAY";
-                emit sendImgCenter(image, m_ImgInfor);
+                emit sendImgCenter(image, m_ImgInfor, m_nId);
             }
             else if (1 == image.channels())
             {
@@ -180,98 +214,13 @@ void CentralWidget::dropEvent(QDropEvent *event)
                 m_ImgInfor.nWidth = image.rows;
                 m_ImgInfor.nHeight = image.cols;
                 m_ImgInfor.sColorSpace = "1GRAY";
-                emit sendImgCenter(image, m_ImgInfor);
+                emit sendImgCenter(image, m_ImgInfor, m_nId);
             }
-            disconnect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimgMul,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
+            disconnect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor, int)),openimgMul,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor, int)));
             openimgMul->show();
         }
     }
-    /*
-    //如果同时拖入了多个资源，只选择第一个
-    QString fileName = urlList.at(0).toLocalFile();
-    if(fileName.isEmpty())
-    {
-        return;
-    }
-    QTextCodec *code = QTextCodec::codecForName("gb18030");
-    std::string name = code->fromUnicode(fileName).data();//filename.toAscii().data()
 
-    cv::Mat image = cv::imread(name, -1);
-    if(!image.data)
-    {
-        QMessageBox msgBox;
-        msgBox.setText(tr("Image Data Is Null"));
-        msgBox.exec();
-    }
-    else
-    {
-        // 将灰色按钮打开
-        connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
-        std::vector<std::string> vsShowButtons;
-        std::vector<std::string> vsCloseButtons;
-        std::string s1 = "actionRGB";
-        std::string s2 = "actionGray";
-        std::string s3 = "actionMap";
-        std::string s4 = "actionsave";
-        std::string s5 = "actionsave_2";
-        std::string s6 = "actionBinary";
-        std::string s7 = "actionManual";
-        std::string s8 = "menuConvolve_Kernel";
-        vsShowButtons.push_back(s1);
-        vsShowButtons.push_back(s2);
-        vsShowButtons.push_back(s3);
-        vsShowButtons.push_back(s4);
-        vsShowButtons.push_back(s5);
-        vsShowButtons.push_back(s6);
-        vsShowButtons.push_back(s7);
-        vsShowButtons.push_back(s8);
-        emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
-        disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
-
-        // 将显示图像窗口打开
-        // 关闭窗口应将内存释放！！！！
-        openimg = new Form(this);
-        m_openimg = openimg;
-        connect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
-        cv::Mat rgb;
-
-        if (3 == image.channels())
-        {
-            m_ImgInfor.sPath = name;
-            m_ImgInfor.nWidth = image.rows;
-            m_ImgInfor.nHeight = image.cols;
-            m_ImgInfor.sColorSpace = "3RGB";
-            cvtColor(image,rgb,CV_BGR2RGB);
-            emit sendImgCenter(rgb, m_ImgInfor);
-        }
-        else if (4 == image.channels())
-        {
-            m_ImgInfor.sPath = name;
-            m_ImgInfor.nWidth = image.rows;
-            m_ImgInfor.nHeight = image.cols;
-            m_ImgInfor.sColorSpace = "4RGB";
-            emit sendImgCenter(image, m_ImgInfor);
-        }
-        else if (2 == image.depth())
-        {
-            m_ImgInfor.sPath = name;
-            m_ImgInfor.nWidth = image.rows;
-            m_ImgInfor.nHeight = image.cols;
-            m_ImgInfor.sColorSpace = "2GRAY";
-            emit sendImgCenter(image, m_ImgInfor);
-        }
-        else if (1 == image.channels())
-        {
-            m_ImgInfor.sPath = name;
-            m_ImgInfor.nWidth = image.rows;
-            m_ImgInfor.nHeight = image.cols;
-            m_ImgInfor.sColorSpace = "1GRAY";
-            emit sendImgCenter(image, m_ImgInfor);
-        }
-        disconnect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
-        openimg->show();
-    }
-    */
 }
 void CentralWidget::dragMoveEvent(QDragMoveEvent *event)
 {
@@ -314,13 +263,13 @@ void CentralWidget::OpenNew(cv::Mat image, INFOR_BASE::sImgInfor imginfor)
     if (3 == image.channels())
     {
         cvtColor(image,rgb,CV_BGR2RGB);
-        emit sendImgCenter(rgb, m_ImgInfor);
+        emit sendImgCenter(rgb, m_ImgInfor, 1);
     }
     else
     {
-        emit sendImgCenter(image, m_ImgInfor);
+        emit sendImgCenter(image, m_ImgInfor, 1);
     }
-    disconnect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor)));
+    disconnect(this, SIGNAL(sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor, int)),openimg,SLOT(getImgCenter(cv::Mat, INFOR_BASE::sImgInfor, int)));
     openimg->show();
 }
 
@@ -496,8 +445,63 @@ void CentralWidget::Connected_RegionSlot()
     disconnect(this, SIGNAL(sendConnected_RegionSlot()), m_openimg, SLOT(Connected_RegionSlot()));
 }
 
+
+void CentralWidget::ErodeSlot()
+{
+    connect(this, SIGNAL(sendErodeSlot()), m_openimg, SLOT(ManualErodeSlot()));
+    emit sendErodeSlot();
+    disconnect(this, SIGNAL(sendErodeSlot()), m_openimg, SLOT(ManualErodeSlot()));
+}
+
+
+void CentralWidget::DilateSlot()
+{
+    connect(this, SIGNAL(sendDilateSlot()), m_openimg, SLOT(ManualDilateSlot()));
+    emit sendDilateSlot();
+    disconnect(this, SIGNAL(sendDilateSlot()), m_openimg, SLOT(ManualDilateSlot()));
+}
+
+void CentralWidget::OpenSlot()
+{
+    connect(this, SIGNAL(sendOpenSlot()), m_openimg, SLOT(ManualOpenSlot()));
+    emit sendOpenSlot();
+    disconnect(this, SIGNAL(sendOpenSlot()), m_openimg, SLOT(ManualOpenSlot()));
+}
+
+void CentralWidget::CloseSlot()
+{
+    connect(this, SIGNAL(sendCloseSlot()), m_openimg, SLOT(ManualCloseSlot()));
+    emit sendCloseSlot();
+    disconnect(this, SIGNAL(sendCloseSlot()), m_openimg, SLOT(ManualCloseSlot()));
+}
+
+
+void CentralWidget::Hit_MissSlot()
+{
+    connect(this, SIGNAL(sendHit_MissSlot()), m_openimg, SLOT(ManualHit_MissSlot()));
+    emit sendHit_MissSlot();
+    disconnect(this, SIGNAL(sendHit_MissSlot()), m_openimg, SLOT(ManualHit_MissSlot()));
+}
+
+void CentralWidget::Top_HatSlot()
+{
+    connect(this, SIGNAL(sendTop_HatSlot()), m_openimg, SLOT(ManualTop_HatSlot()));
+    emit sendTop_HatSlot();
+    disconnect(this, SIGNAL(sendTop_HatSlot()), m_openimg, SLOT(ManualTop_HatSlot()));
+}
+
+void CentralWidget::Black_HatSlot()
+{
+    connect(this, SIGNAL(sendBlack_HatSlot()), m_openimg, SLOT(ManualBlack_HatSlot()));
+    emit sendBlack_HatSlot();
+    disconnect(this, SIGNAL(sendBlack_HatSlot()), m_openimg, SLOT(ManualBlack_HatSlot()));
+}
+
+
 void CentralWidget::ButtonShowManageCloseGraySlot(std::vector<std::string> vsShowButtons, std::vector<std::string> vsCloseButtons)
 {
+    qDebug() << vsShowButtons.size();
+    qDebug() << vsCloseButtons.size();
     connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
     emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
 }
@@ -506,20 +510,53 @@ void CentralWidget::ButtonShowManageOpenGraySlot(std::vector<std::string> vsShow
     connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
     emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
 }
-void CentralWidget::CloseImgWindowSlot()
+
+void CentralWidget::CloseImgWindowFromFormSlot(int nId)
 {
-    //connect(this, SIGNAL(sendCloseImgWindow()), c, SLOT(CloseImgWindowSlot()));
-    //emit sendCloseImgWindow();
-    openimg->close();
+    m_openimg->close(); 
 }
 
-void CentralWidget::CloseImgWindowFromFormSlot()
-{
-    qDebug("cllse");
-    openimg->close();
-}
 void CentralWidget::ReceiveFormSelfSlot(Form * pFormObj)
 {
     m_openimg = pFormObj;
+    connect(this, SIGNAL(sendUpdateAllSlot()), m_openimg, SLOT(UpdateAllSlot()));
+    emit sendUpdateAllSlot();
+    disconnect(this, SIGNAL(sendUpdateAllSlot()), m_openimg, SLOT(UpdateAllSlot()));
+}
 
+void CentralWidget::Structured_LightSlot()
+{
+    m_pCalibrationObj = new CCalibration();
+    m_pCStructLightObj = new CStructuredLightCalibration(this);
+    m_pCStructLightObj->setModal(true);
+    m_pCStructLightObj->setAttribute(Qt::WA_DeleteOnClose);
+    m_pCStructLightObj->show();
+}
+
+void CentralWidget::Structured_LightParamSlot
+(
+        std::string sPath, cv::Point pWidthHeight,
+        double dPerMove, double dDis2Line, double dC
+)
+{
+    std::string s = sPath;
+    QString ss = QString::fromStdString(s);
+    std::vector<cv::Point> vpLeft;
+    std::vector<cv::Point> vpRight;
+    //cv::Point pWidthHeight;
+    //pWidthHeight.x = 2592;
+    //pWidthHeight.y = 1944;
+    double dcot;
+    double dBaseLine;
+    double dF;
+    double dCenterDis;
+    m_pCalibrationObj->StructedLightReadData(s, vpLeft, vpRight);
+    m_pCalibrationObj->StructedLightCalibration
+            (vpLeft, vpRight,
+             pWidthHeight, dPerMove, dDis2Line, dC,
+             dCenterDis, dcot, dBaseLine, dF);
+    qDebug() << "dCenterDis = " << dCenterDis;
+    qDebug() << "dcot = " << dcot;
+    qDebug() << "dBaseLine = " << dBaseLine;
+    qDebug() << "dF = " << dF;
 }

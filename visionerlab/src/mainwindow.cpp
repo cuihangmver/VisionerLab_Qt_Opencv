@@ -37,6 +37,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionGaussian, SIGNAL(triggered()), c,SLOT(GaussianSlot()));
     connect(ui->actionLaplace, SIGNAL(triggered()), c,SLOT(LaplaceSlot()));
     connect(ui->actionConnected_Region, SIGNAL(triggered()), c,SLOT(Connected_RegionSlot()));
+    connect(ui->actionErode, SIGNAL(triggered()), c,SLOT(ErodeSlot()));
+    connect(ui->actionDilate, SIGNAL(triggered()), c,SLOT(DilateSlot()));
+    connect(ui->actionOpen_2, SIGNAL(triggered()), c,SLOT(OpenSlot()));
+    connect(ui->actionClose_2, SIGNAL(triggered()), c,SLOT(CloseSlot()));
+    connect(ui->actionHit_Miss, SIGNAL(triggered()), c,SLOT(Hit_MissSlot()));
+    connect(ui->actionTop_Hat, SIGNAL(triggered()), c,SLOT(Top_HatSlot()));
+    connect(ui->actionBlack_Hat, SIGNAL(triggered()), c,SLOT(Black_HatSlot()));
+    connect(ui->actionStructured_Light, SIGNAL(triggered()), c,SLOT(Structured_LightSlot()));
+
+
+
     initButton(ui);
     m_ui = ui;
     m_parent = parent;
@@ -78,17 +89,18 @@ void MainWindow::initButton(Ui::MainWindow *ui)
     ui->actionEqualization->setDisabled(true);
     ui->actionExpansion->setDisabled(true);
     ui->menuConvolve_Kernel->setDisabled(true);
-}
-
-
-void MainWindow::openButton(Ui::MainWindow *ui)
-{
-    ui->actionRGB->setDisabled(false);
-    ui->actionGray->setDisabled(false);
-    ui->actionMap->setDisabled(false);
-    ui->actionsave->setDisabled(false);
-    ui->actionsave_2->setDisabled(false);
-    ui->actionBinary->setDisabled(false);
+    ui->actionGaussian->setDisabled(true);
+    ui->actionLaplace->setDisabled(true);
+    ui->actionConnected_Region->setDisabled(true);
+    ui->actionErode->setDisabled(true);
+    ui->actionDilate->setDisabled(true);
+    ui->actionOpen_2->setDisabled(true);
+    ui->actionClose_2->setDisabled(true);
+    ui->actionHit_Miss->setDisabled(true);
+    ui->actionTop_Hat->setDisabled(true);
+    ui->actionBlack_Hat->setDisabled(true);
+    ui->actionMean->setDisabled(true);
+    ui->actionMedian->setDisabled(true);
 }
 
 void MainWindow::OpenNew()
@@ -132,10 +144,23 @@ void MainWindow::ButtonShowManage(std::vector<std::string> vsShowButtons, std::v
     std::string s9 = "actionAdaptive";
     std::string s10 = "actionEqualization";
     std::string s11 = "menuConvolve_Kernel";
-
+    std::string s12 = "actionGaussian";
+    std::string s13 = "actionLaplace";
+    std::string s14 = "actionConnected_Region";
+    std::string s15 = "actionErode";
+    std::string s16 = "actionDilate";
+    std::string s17 = "actionOpen_2";
+    std::string s18 = "actionClose_2";
+    std::string s19 = "actionHit_Miss";
+    std::string s20 = "actionTop_Hat";
+    std::string s21 = "actionBlack_Hat";
+    qDebug() << vsShowButtons.size();
+    qDebug() << vsCloseButtons.size();
     for(int i = 0; i < vsShowButtons.size(); i++)
     {
+
         QString qstr2 = QString::fromStdString(vsShowButtons[i]);
+        qDebug() << qstr2;
         if(s1 == vsShowButtons[i])
         {
             ui->actionRGB->setDisabled(false);
@@ -180,10 +205,52 @@ void MainWindow::ButtonShowManage(std::vector<std::string> vsShowButtons, std::v
         {
             ui->menuConvolve_Kernel->setDisabled(false);
         }
+        else if(s12 == vsShowButtons[i])
+        {
+            ui->actionGaussian->setDisabled(false);
+        }
+        else if(s13 == vsShowButtons[i])
+        {
+            ui->actionLaplace->setDisabled(false);
+        }
+        else if(s14 == vsShowButtons[i])
+        {
+            ui->actionConnected_Region->setDisabled(false);
+        }
+        else if(s15 == vsShowButtons[i])
+        {
+            ui->actionErode->setDisabled(false);
+        }
+        else if(s16 == vsShowButtons[i])
+        {
+            ui->actionDilate->setDisabled(false);
+        }
+        else if(s17 == vsShowButtons[i])
+        {
+            ui->actionOpen_2->setDisabled(false);
+        }
+        else if(s18 == vsShowButtons[i])
+        {
+            ui->actionClose_2->setDisabled(false);
+        }
+        else if(s19 == vsShowButtons[i])
+        {
+            ui->actionHit_Miss->setDisabled(false);
+        }
+        else if(s20 == vsShowButtons[i])
+        {
+            ui->actionTop_Hat->setDisabled(false);
+        }
+        else if(s21 == vsShowButtons[i])
+        {
+            ui->actionBlack_Hat->setDisabled(false);
+        }
     }
 
     for(int i = 0; i < vsCloseButtons.size(); i++)
     {
+        QString qstr2 = QString::fromStdString(vsCloseButtons[i]);
+        qDebug() << qstr2;
         if(s1 == vsCloseButtons[i])
         {
             ui->actionRGB->setDisabled(true);
@@ -220,13 +287,53 @@ void MainWindow::ButtonShowManage(std::vector<std::string> vsShowButtons, std::v
         {
             ui->actionAdaptive->setDisabled(true);
         }
-        else if(s10 == vsShowButtons[i])
+        else if(s10 == vsCloseButtons[i])
         {
             ui->actionEqualization->setDisabled(true);
         }
-        else if(s11 == vsShowButtons[i])
+        else if(s11 == vsCloseButtons[i])
         {
             ui->menuConvolve_Kernel->setDisabled(true);
+        }
+        else if(s12 == vsCloseButtons[i])
+        {
+            ui->actionGaussian->setDisabled(true);
+        }
+        else if(s13 == vsCloseButtons[i])
+        {
+            ui->actionLaplace->setDisabled(true);
+        }
+        else if(s14 == vsCloseButtons[i])
+        {
+            ui->actionConnected_Region->setDisabled(true);
+        }
+        else if(s15 == vsCloseButtons[i])
+        {
+            ui->actionErode->setDisabled(true);
+        }
+        else if(s16 == vsCloseButtons[i])
+        {
+            ui->actionDilate->setDisabled(true);
+        }
+        else if(s17 == vsCloseButtons[i])
+        {
+            ui->actionOpen_2->setDisabled(true);
+        }
+        else if(s18 == vsCloseButtons[i])
+        {
+            ui->actionClose_2->setDisabled(true);
+        }
+        else if(s19 == vsCloseButtons[i])
+        {
+            ui->actionHit_Miss->setDisabled(true);
+        }
+        else if(s20 == vsCloseButtons[i])
+        {
+            ui->actionTop_Hat->setDisabled(true);
+        }
+        else if(s21 == vsCloseButtons[i])
+        {
+            ui->actionBlack_Hat->setDisabled(true);
         }
     }
 }
@@ -256,8 +363,4 @@ void MainWindow::on_actionOpen_triggered()
     }
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
-{
-    connect(this, SIGNAL(sendCloseImgWindow()), c, SLOT(CloseImgWindowSlot()));
-    emit sendCloseImgWindow();
-}
+

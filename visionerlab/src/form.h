@@ -21,7 +21,15 @@
 #include "laplace.h"
 #include "connectedregion.h"
 #include <QTime>
-
+#include "cvlimgprocbase.h"
+#include "ccalibration.h"
+#include "erode.h"
+#include "dilate.h"
+#include "open.h"
+#include "close.h"
+#include "hitmiss.h"
+#include "tophat.h"
+#include "blackhat.h"
 namespace Ui {
 class Form;
 }
@@ -54,6 +62,7 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event);
 private:
     Ui::Form *ui;
+    CVLImgProcBase *m_pImgProcBaseObj;
     QWidget *m_parentCopy;
     QLabel *m_label;
     cv::Mat m_mImg;
@@ -68,17 +77,26 @@ private:
     AdaptiveDialog *m_pAdaptiveDialog;
     GaussianDialog *m_pGaussianDialog;
     Laplace *m_pLaplaceDialog;
+    Erode *m_pErodeDialog;
+    Dilate *m_pDilateDialog;
+    Open *m_pOpenDialog;
+    Close *m_pCloseDialog;
+    HitMiss *m_pHitMissDialog;
+    TopHat *m_pTopHatDialog;
+    BlackHat *m_pBlackHatDialog;
     ConnectedRegion *m_pConnectedRegionDialog;
     QHBoxLayout *pg;
     QVBoxLayout *pv;
     QPushButton *pb,*pb1,*pb2;
     std::vector<cv::Mat> vmStackBack;
     std::vector<cv::Mat> vmStackFront;
+    CCalibration *m_pCalibrationObj;
+    int m_nId;
 private slots:
     // 槽函数
     // 接收主窗口的值
     // void getImg(cv::Mat, INFOR_BASE::sImgInfor);
-    void getImgCenter(cv::Mat, INFOR_BASE::sImgInfor);
+    void getImgCenter(cv::Mat, INFOR_BASE::sImgInfor, int);
     void closeEventSlot();
     void closeEventSaveAsSlot();
     // 接收子窗口数值
@@ -110,6 +128,7 @@ private slots:
     void Median_5_5Slot();
     void Median_7_7Slot();
     void ThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC);
+    void ThresholdAdaptiveChangeCancelSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC);
     void PreviewThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC);
     void ManualGaussianSlot();
     void ManualGaussianChangeSlot(int nValue);
@@ -117,14 +136,43 @@ private slots:
     void ManualLaplaceChangeSlot(int nValue);
     void Connected_RegionSlot();
     void ManualConnected_RegionSlot(int nValue,int ConnectedRegion48);
+    void ManualErodeSlot();
+    void ManualErodeChangeSlot(int nKernelSize, QString sShape);
+    void ManualDilateSlot();
+    void ManualDilateChangeSlot(int nKernelSize, QString sShape);
+    void ManualOpenSlot();
+    void ManualOpenChangeSlot(int nKernelSize, QString sShape);
+    void ManualCloseSlot();
+    void ManualCloseChangeSlot(int nKernelSize, QString sShape);
+    void ManualHit_MissSlot();
+    void ManualHitMissChangeSlot(int nKernelSize, QString sShape);
+    void ManualTop_HatSlot();
+    void ManualTopHatChangeSlot(int nKernelSize, QString sShape);
+    void ManualBlack_HatSlot();
+    void ManualBlackHatChangeSlot(int nKernelSize, QString sShape);
     void OKConnected_RegionSliderSelectImg();
     void CancelConnected_RegionSliderSelectImg();
+    void OKErodeSliderSelectImg();
+    void CancelErodeSliderSelectImg();
+    void OKDilateSliderSelectImg();
+    void CancelDilateSliderSelectImg();
+    void OKOpenSliderSelectImg();
+    void CancelOpenSliderSelectImg();
+    void OKHitMissSliderSelectImg();
+    void CancelHitMissSliderSelectImg();
+    void OKTopHatSliderSelectImg();
+    void CancelTopHatSliderSelectImg();
+    void OKBlackHatSliderSelectImg();
+    void CancelBlackHatSliderSelectImg();
+    void OKCloseSliderSelectImg();
+    void CancelCloseSliderSelectImg();
+    void UpdateAllSlot();
 signals:
     // 信号函数
     void sendMouse(int, int, QColor, int );
     void sendMouseDepth(int, int, ushort, int );
     void sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>);
-    void sendCloseImgWindow();
+    void sendCloseImgWindow(int);
     void sendFormSelf(Form *);
 };
 

@@ -87,104 +87,7 @@ AdaptiveDialog::AdaptiveDialog(QWidget *parent) :
 
 AdaptiveDialog::~AdaptiveDialog()
 {
-    if(nullptr != pLabel1)
-    {
-        delete pLabel1;
-        pLabel1 = nullptr;
-    }
-    if(nullptr != pLabel2)
-    {
-        delete pLabel2;
-        pLabel2 = nullptr;
-    }
-    if(nullptr != pLabel3)
-    {
-        delete pLabel3;
-        pLabel3 = nullptr;
-    }
-    if(nullptr != pLabel4)
-    {
-        delete pLabel4;
-        pLabel4 = nullptr;
-    }
-    if(nullptr != pLabel5)
-    {
-        delete pLabel5;
-        pLabel5 = nullptr;
-    }
 
-    if(nullptr != pComboBox1)
-    {
-        delete pComboBox1;
-        pComboBox1 = nullptr;
-    }
-    if(nullptr != pComboBox2)
-    {
-        delete pComboBox2;
-        pComboBox2 = nullptr;
-    }
-    if(nullptr != pComboBox3)
-    {
-        delete pComboBox3;
-        pComboBox3 = nullptr;
-    }
-    if(nullptr != pComboBox4)
-    {
-        delete pComboBox4;
-        pComboBox4 = nullptr;
-    }
-    if(nullptr != pComboBox5)
-    {
-        delete pComboBox5;
-        pComboBox5 = nullptr;
-    }
-
-    if(nullptr != qButtonHor1)
-    {
-        delete qButtonHor1;
-        qButtonHor1 = nullptr;
-    }
-    if(nullptr != qButtonHor2)
-    {
-        delete qButtonHor2;
-        qButtonHor2 = nullptr;
-    }
-    if(nullptr != qButtonHor3)
-    {
-        delete qButtonHor3;
-        qButtonHor3 = nullptr;
-    }
-    if(nullptr != qButtonHor4)
-    {
-        delete qButtonHor4;
-        qButtonHor4 = nullptr;
-    }
-    if(nullptr != qButtonHor5)
-    {
-        delete qButtonHor5;
-        qButtonHor5 = nullptr;
-    }
-
-    if(nullptr != qButtonVer)
-    {
-        delete qButtonVer;
-        qButtonVer = nullptr;
-    }
-    if(nullptr != button)
-    {
-        delete button;
-        button = nullptr;
-    }
-    if(nullptr != pb)
-    {
-        delete pb;
-        pb = nullptr;
-    }
-    if(nullptr != ui)
-    {
-        delete ui;
-        ui = nullptr;
-    }
 }
 
 void AdaptiveDialog::SetMaxValue(QString sMaxValue)
@@ -212,15 +115,21 @@ void AdaptiveDialog::OKSelectAdaptive()
 {
     connect(this, SIGNAL(ThresholdAdaptiveChangeSend(double , int , int , int , double )), m_pParent, SLOT(ThresholdAdaptiveChangeSlot(double , int , int , int , double)));
     emit ThresholdAdaptiveChangeSend(m_dMaxValue , m_nAdaptiveMethod , m_nThresholdType , m_nBlockSize ,m_dC);
-    disconnect(this, 0, m_pParent, 0);
+    disconnect(this, SIGNAL(ThresholdAdaptiveChangeSend(double , int , int , int , double )), m_pParent, SLOT(ThresholdAdaptiveChangeSlot(double , int , int , int , double)));
 }
 void AdaptiveDialog::CancelSelectAdaptive()
 {
-
+    connect(this, SIGNAL(ThresholdAdaptiveChangeSend(double , int , int , int , double )), m_pParent, SLOT(ThresholdAdaptiveChangeCancelSlot(double , int , int , int , double)));
+    emit ThresholdAdaptiveChangeSend(m_dMaxValue , m_nAdaptiveMethod , m_nThresholdType , m_nBlockSize ,m_dC);
+    disconnect(this, SIGNAL(ThresholdAdaptiveChangeSend(double , int , int , int , double )), m_pParent, SLOT(ThresholdAdaptiveChangeCancelSlot(double , int , int , int , double)));
 }
 void AdaptiveDialog::PreviewSelectAdaptive()
 {
     connect(this, SIGNAL(PreviewThresholdAdaptiveChangeSend(double , int , int , int , double )), m_pParent, SLOT(PreviewThresholdAdaptiveChangeSlot(double , int , int , int , double)));
     emit PreviewThresholdAdaptiveChangeSend(m_dMaxValue , m_nAdaptiveMethod , m_nThresholdType , m_nBlockSize ,m_dC);
-    disconnect(this, 0, m_pParent, 0);
+    disconnect(this, SIGNAL(PreviewThresholdAdaptiveChangeSend(double , int , int , int , double )), m_pParent, SLOT(PreviewThresholdAdaptiveChangeSlot(double , int , int , int , double)));
+}
+void AdaptiveDialog::closeEvent(QCloseEvent *event)
+{
+    this->close();
 }

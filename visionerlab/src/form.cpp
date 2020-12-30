@@ -6,6 +6,7 @@ Form::Form(QWidget *parent) :
     ui(new Ui::Form)
 {
     ui->setupUi(this);
+    m_pImgProcBaseObj = new CVLImgProcBase();
     QWidget::installEventFilter(this);
     m_parentCopy = parent;
     // 给dialog增加最大化最小化
@@ -19,7 +20,7 @@ Form::Form(QWidget *parent) :
     connect(this,SIGNAL(sendMouse(int, int, QColor,int)), m_parentCopy, SLOT(getMouse(int, int, QColor, int)));
     connect(this,SIGNAL(sendMouseDepth(int, int, ushort,int)), m_parentCopy, SLOT(getMouseDepth(int, int, ushort, int)));
     m_label = new QLabel;
-
+    m_pCalibrationObj = new CCalibration();
     scrollArea = new QScrollArea(this);
     m_dScaling = 1.0;
     m_bCtrlPress = false;
@@ -29,51 +30,18 @@ Form::Form(QWidget *parent) :
 
 Form::~Form()
 {
-    if(nullptr != pb)
+
+    if(nullptr == m_pCalibrationObj)
     {
-        delete pb;
-        pb = nullptr;
+        delete m_pCalibrationObj;
+        m_pCalibrationObj = nullptr;
     }
-    if(nullptr != pb1)
+    if(nullptr == m_pImgProcBaseObj)
     {
-        delete pb1;
-        pb1 = nullptr;
+        delete m_pImgProcBaseObj;
+        m_pImgProcBaseObj = nullptr;
     }
-    if(nullptr != pb2)
-    {
-        delete pb2;
-        pb2 = nullptr;
-    }
-    if(nullptr != pg)
-    {
-        delete pg;
-        pg = nullptr;
-    }
-    if(nullptr != pv)
-    {
-        delete pv;
-        pv = nullptr;
-    }
-    if(nullptr != m_dialogSlider)
-    {
-        delete m_dialogSlider;
-        m_dialogSlider = nullptr;
-    }
-    if(nullptr != scrollArea)
-    {
-        delete scrollArea;
-        scrollArea = nullptr;
-    }
-    if(nullptr != m_label)
-    {
-        delete m_label;
-        m_label = nullptr;
-    }
-    if(nullptr != ui)
-    {
-        delete ui;
-        ui = nullptr;
-    }
+
 }
 void Form::Resize(cv::Mat mSrc, cv::Mat &mDst, double dScale)
 {
@@ -114,9 +82,17 @@ void Form::Display4DepthMat(cv::Mat image, QImage &img)
     std::string s1 = "actionManual";
     std::string s2 = "actionOtus";
     std::string s3 = "actionAdaptive";
+    std::string s4 = "actionConnected_Region";
+    std::string s5 = "actionHit_Miss";
+    std::string s6 = "actionTop_Hat";
+    std::string s7 = "actionBlack_Hat";
     vsCloseButtons.push_back(s1);
     vsCloseButtons.push_back(s2);
     vsCloseButtons.push_back(s3);
+    vsCloseButtons.push_back(s4);
+    vsCloseButtons.push_back(s5);
+    vsCloseButtons.push_back(s6);
+    vsCloseButtons.push_back(s7);
     emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
     disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>)));;
 }
@@ -134,10 +110,19 @@ void Form::Display3DepthMat(cv::Mat image, QImage &img)
     std::string s1 = "actionManual";
     std::string s2 = "actionOtus";
     std::string s3 = "actionAdaptive";
+    std::string s4 = "actionConnected_Region";
+    std::string s5 = "actionHit_Miss";
+    std::string s6 = "actionTop_Hat";
+    std::string s7 = "actionBlack_Hat";
     vsCloseButtons.push_back(s1);
     vsCloseButtons.push_back(s2);
     vsCloseButtons.push_back(s3);
+    vsCloseButtons.push_back(s4);
+    vsCloseButtons.push_back(s5);
+    vsCloseButtons.push_back(s6);
+    vsCloseButtons.push_back(s7);
     emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
+
     disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageCloseGraySlot(std::vector<std::string> ,std::vector<std::string>)));
 }
 
@@ -167,12 +152,14 @@ void Form::Display2DepthMat(cv::Mat image, QImage &img)
     // 打开导航栏中的按钮
     std::vector<std::string> vsShowButtons;
     std::vector<std::string> vsCloseButtons;
-    std::string s1 = "actionManual";
-    std::string s2 = "actionOtus";
-    std::string s3 = "actionAdaptive";
-    vsShowButtons.push_back(s1);
-    vsShowButtons.push_back(s2);
-    vsShowButtons.push_back(s3);
+    std::string s1 = "actionEqualization";
+    std::string s2 = "actionHit_Miss";
+    std::string s3 = "actionTop_Hat";
+    std::string s4 = "actionBlack_Hat";
+    vsCloseButtons.push_back(s1);
+    vsCloseButtons.push_back(s2);
+    vsCloseButtons.push_back(s3);
+    vsCloseButtons.push_back(s4);
     emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
     disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>)));
 }
@@ -187,14 +174,16 @@ void Form::Display1DepthMat(cv::Mat image, QImage &img)
     // 打开导航栏中的按钮
     std::vector<std::string> vsShowButtons;
     std::vector<std::string> vsCloseButtons;
-    std::string s1 = "actionManual";
-    std::string s2 = "actionOtus";
-    std::string s3 = "actionAdaptive";
-    std::string s4 = "actionEqualization";
-    vsShowButtons.push_back(s1);
-    vsShowButtons.push_back(s2);
-    vsShowButtons.push_back(s3);
-    vsShowButtons.push_back(s4);
+
+    std::string s5 = "actionConnected_Region";
+    if(!m_pImgProcBaseObj->IfBinaryImg(image))
+    {
+        vsCloseButtons.push_back(s5);
+    }
+    else
+    {
+        vsShowButtons.push_back(s5);
+    }
     emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
     disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>)));
 }
@@ -202,6 +191,8 @@ void Form::Display1DepthMat(cv::Mat image, QImage &img)
 // 在显示图像这里向主界面发送信号，用以控制按钮亮灭
 void Form::DisplayMat(cv::Mat mimage, QLabel *label, double dScaling)
 {
+
+
     // 缩放像素级别,这里的放大效果是像素级别，如果放大2倍，某一个像素现在变为4个
 
     //if(dScaling > 1)
@@ -242,6 +233,7 @@ void Form::DisplayMat(cv::Mat mimage, QLabel *label, double dScaling)
     }
     else if(3 == mimage.channels())
     {
+
         Display3DepthMat(image, img);
     }
     else if(2 == mimage.depth())
@@ -261,8 +253,9 @@ void Form::DisplayMat(cv::Mat mimage, QLabel *label, double dScaling)
 }
 
 // 显示图像窗口
-void Form::getImgCenter(cv::Mat mImg, INFOR_BASE::sImgInfor imgInfor)
+void Form::getImgCenter(cv::Mat mImg, INFOR_BASE::sImgInfor imgInfor, int nId)
 {
+    m_nId = nId;
     m_mImg = mImg.clone();
     m_imgInfor = imgInfor;
     /*layout布局*/
@@ -283,6 +276,7 @@ void Form::getImgCenter(cv::Mat mImg, INFOR_BASE::sImgInfor imgInfor)
     m_label->setStyleSheet("border:1px solid black;");
     // 设置鼠标移动相应
     vmStackBack.push_back(m_mImg.clone());
+
     DisplayMat(m_mImg, m_label, m_dScaling);
     // 这两个控件都要相应鼠标事件
     m_label->setMouseTracking(true);
@@ -435,31 +429,29 @@ void Form::closeEvent(QCloseEvent *event) //根据不同的需求进行添加，
 {
     if(!m_bModifyImg)
     {
-        connect(this, SIGNAL(sendCloseImgWindow()), m_parentCopy, SLOT(CloseImgWindowFromFormSlot()));
-        emit sendCloseImgWindow();
-        return ;
+        this->close();
+        return;
     }
 
     QString filepath = QString::fromStdString(m_imgInfor.sPath);
-
     int ret = QMessageBox::warning(0,"Warning",QString("%1 has been changed!\n Do you want to save it?").arg(filepath),QMessageBox::Yes |QMessageBox::No|QMessageBox::Cancel,QMessageBox::No);
     if(ret == QMessageBox::Yes) //如果选择保存文件，则执行保存操作
     {
         std::string s = filepath.toStdString();
         cv::imwrite(s, m_mImg);
+        this->close();
     }
     else if(ret == QMessageBox::Cancel)
     {
-        //setAttribute(Qt::WA_DeleteOnClose);
         this->close();
     }
     else
     {
-        //setAttribute(Qt::WA_DeleteOnClose);
         this->close();
     }
 }
 
+// 窗口是否为活动窗口
 bool Form::eventFilter(QObject *watched, QEvent *event)
 {
     if( watched == this )
@@ -478,7 +470,58 @@ bool Form::eventFilter(QObject *watched, QEvent *event)
     }
     return false ;
 }
-
+void Form::UpdateAllSlot()
+{
+    connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>)));
+    // 打开导航栏中的按钮
+    std::vector<std::string> vsShowButtons;
+    std::vector<std::string> vsCloseButtons;
+    std::string s1 = "actionRGB";
+    std::string s2 = "actionGray";
+    std::string s3 = "actionMap";
+    std::string s4 = "actionsave";
+    std::string s5 = "actionsave_2";
+    std::string s6 = "actionBinary";
+    std::string s7 = "actionManual";
+    std::string s8 = "actionOtus";
+    std::string s9 = "actionAdaptive";
+    std::string s10 = "actionEqualization";
+    std::string s11 = "menuConvolve_Kernel";
+    std::string s12 = "actionGaussian";
+    std::string s13 = "actionLaplace";
+    std::string s14 = "actionConnected_Region";
+    std::string s15 = "actionErode";
+    std::string s16 = "actionDilate";
+    std::string s17 = "actionOpen_2";
+    std::string s18 = "actionClose_2";
+    std::string s19 = "actionHit_Miss";
+    std::string s20 = "actionTop_Hat";
+    std::string s21 = "actionBlack_Hat";
+    vsShowButtons.push_back(s1);
+    vsShowButtons.push_back(s2);
+    vsShowButtons.push_back(s3);
+    vsShowButtons.push_back(s4);
+    vsShowButtons.push_back(s5);
+    vsShowButtons.push_back(s6);
+    vsShowButtons.push_back(s7);
+    vsShowButtons.push_back(s8);
+    vsShowButtons.push_back(s9);
+    vsShowButtons.push_back(s10);
+    vsShowButtons.push_back(s11);
+    vsShowButtons.push_back(s12);
+    vsShowButtons.push_back(s13);
+    vsShowButtons.push_back(s14);
+    vsShowButtons.push_back(s15);
+    vsShowButtons.push_back(s16);
+    vsShowButtons.push_back(s17);
+    vsShowButtons.push_back(s18);
+    vsShowButtons.push_back(s19);
+    vsShowButtons.push_back(s20);
+    vsShowButtons.push_back(s21);
+    emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
+    disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManageOpenGraySlot(std::vector<std::string> ,std::vector<std::string>)));
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
 // 导航栏保存关闭操作
 void Form::closeEventSlot()
 {
@@ -580,6 +623,7 @@ void Form::ManualThresholdChangeSlot(int nValue)
 {
     m_bModifyImg = true;
     cv::threshold(m_mImg, m_mTem, nValue, 255, cv::THRESH_BINARY_INV);
+
     DisplayMat(m_mTem, m_label, m_dScaling);
 }
 
@@ -596,6 +640,8 @@ void Form::ThresholdAdaptiveSlot()
 {
     m_bModifyImg = true;
     m_pAdaptiveDialog = new AdaptiveDialog(this);
+    m_pAdaptiveDialog->setAttribute(Qt::WA_DeleteOnClose);
+    m_pAdaptiveDialog->setModal(true);
     m_pAdaptiveDialog->show();
 }
 
@@ -606,10 +652,14 @@ void Form::ThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, in
     vmStackFront.clear();
     vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
+    m_pAdaptiveDialog->close();
+}
+void Form::ThresholdAdaptiveChangeCancelSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC)
+{
+    DisplayMat(m_mImg, m_label, m_dScaling);
 }
 void Form::PreviewThresholdAdaptiveChangeSlot(double dMaxValue, int nAdaptiveMethod, int nThresholdType, int nBlockSize, double dC)
 {
-    m_bModifyImg = true;
     cv::adaptiveThreshold(m_mImg, m_mTem, dMaxValue, nAdaptiveMethod, nThresholdType, nBlockSize, dC);
     DisplayMat(m_mTem, m_label, m_dScaling);
 }
@@ -744,6 +794,7 @@ void Form::ManualGaussianSlot()
 {
     m_bModifyImg = true;
     m_pGaussianDialog = new GaussianDialog(this);
+    m_pGaussianDialog->setAttribute(Qt::WA_DeleteOnClose);
     m_pGaussianDialog->setModal(true);
     m_pGaussianDialog->show();
 }
@@ -762,6 +813,7 @@ void Form::ManualLaplaceSlot()
 {
     m_bModifyImg = true;
     m_pLaplaceDialog = new Laplace(this);
+    m_pLaplaceDialog->setAttribute(Qt::WA_DeleteOnClose);
     m_pLaplaceDialog->setModal(true);
     m_pLaplaceDialog->show();
 }
@@ -773,8 +825,235 @@ void Form::ManualLaplaceChangeSlot(int nValue)
     }
     m_bModifyImg = true;
     cv::Laplacian(m_mImg, m_mTem, -1, nValue, 1, 0, cv::BORDER_DEFAULT);
+    DisplayMat(m_mTem, m_label, m_dScaling);
+}
 
+void Form::ManualErodeSlot()
+{
+    m_bModifyImg = true;
+    m_pErodeDialog = new Erode(this);
+     m_pErodeDialog->setAttribute(Qt::WA_DeleteOnClose);
+    m_pErodeDialog->setModal(true);
+    m_pErodeDialog->show();
+}
+void Form::ManualErodeChangeSlot(int nKernelSize, QString sShape)
+{
+    if(nKernelSize % 2 != 1)
+    {
+        nKernelSize += 1;
+    }
+    m_bModifyImg = true;
+    cv::Mat erodeStruct;
+    if("RECT" == sShape)
+    {
+        erodeStruct = cv::getStructuringElement(cv::MORPH_RECT,cv::Size(nKernelSize,nKernelSize));
+    }
+    else if("CROSS" == sShape)
+    {
+        erodeStruct = cv::getStructuringElement(cv::MORPH_CROSS,cv::Size(nKernelSize,nKernelSize));
+    }
+    else if("ELLIPSE" == sShape)
+    {
+        erodeStruct = cv::getStructuringElement(cv::MORPH_ELLIPSE,cv::Size(nKernelSize,nKernelSize));
+    }
+    cv::erode(m_mImg, m_mTem, erodeStruct);
+    DisplayMat(m_mTem, m_label, m_dScaling);
+}
 
+void Form::ManualDilateSlot()
+{
+    m_bModifyImg = true;
+    m_pDilateDialog = new Dilate(this);
+    m_pDilateDialog->setAttribute(Qt::WA_DeleteOnClose);
+    m_pDilateDialog->setModal(true);
+    m_pDilateDialog->show();
+}
+void Form::ManualDilateChangeSlot(int nKernelSize, QString sShape)
+{
+    if(nKernelSize % 2 != 1)
+    {
+        nKernelSize += 1;
+    }
+    m_bModifyImg = true;
+    cv::Mat dilateStruct;
+    if("RECT" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_RECT,cv::Size(nKernelSize,nKernelSize));
+    }
+    else if("CROSS" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_CROSS,cv::Size(nKernelSize,nKernelSize));
+    }
+    else if("ELLIPSE" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_ELLIPSE,cv::Size(nKernelSize,nKernelSize));
+    }
+
+    cv::dilate(m_mImg, m_mTem, dilateStruct);
+    DisplayMat(m_mTem, m_label, m_dScaling);
+}
+
+void Form::ManualOpenSlot()
+{
+    m_bModifyImg = true;
+    m_pOpenDialog = new Open(this);
+    m_pOpenDialog->setAttribute(Qt::WA_DeleteOnClose);
+    m_pOpenDialog->setModal(true);
+    m_pOpenDialog->show();
+}
+void Form::ManualOpenChangeSlot(int nKernelSize, QString sShape)
+{
+    if(nKernelSize % 2 != 1)
+    {
+        nKernelSize += 1;
+    }
+    m_bModifyImg = true;
+    cv::Mat dilateStruct;
+    if("RECT" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_RECT,cv::Size(nKernelSize,nKernelSize));
+    }
+    else if("CROSS" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_CROSS,cv::Size(nKernelSize,nKernelSize));
+    }
+    else if("ELLIPSE" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_ELLIPSE,cv::Size(nKernelSize,nKernelSize));
+    }
+    cv::erode(m_mImg, m_mTem, dilateStruct);
+    cv::dilate(m_mTem, m_mTem, dilateStruct);
+    DisplayMat(m_mTem, m_label, m_dScaling);  
+}
+
+void Form::ManualCloseSlot()
+{
+    m_bModifyImg = true;
+    m_pCloseDialog = new Close(this);
+    m_pCloseDialog->setAttribute(Qt::WA_DeleteOnClose);
+    m_pCloseDialog->setModal(true);
+    m_pCloseDialog->show();
+}
+void Form::ManualCloseChangeSlot(int nKernelSize, QString sShape)
+{
+    if(nKernelSize % 2 != 1)
+    {
+        nKernelSize += 1;
+    }
+    m_bModifyImg = true;
+    cv::Mat dilateStruct;
+    if("RECT" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_RECT,cv::Size(nKernelSize,nKernelSize));
+    }
+    else if("CROSS" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_CROSS,cv::Size(nKernelSize,nKernelSize));
+    }
+    else if("ELLIPSE" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_ELLIPSE,cv::Size(nKernelSize,nKernelSize));
+    }
+    cv::dilate(m_mImg, m_mTem, dilateStruct);
+    cv::erode(m_mTem, m_mTem, dilateStruct);
+    DisplayMat(m_mTem, m_label, m_dScaling);
+}
+
+void Form::ManualHit_MissSlot()
+{
+    m_bModifyImg = true;
+    m_pHitMissDialog = new HitMiss(this);
+    m_pHitMissDialog->setAttribute(Qt::WA_DeleteOnClose);
+    m_pHitMissDialog->setModal(true);
+    m_pHitMissDialog->show();
+}
+void Form::ManualHitMissChangeSlot(int nKernelSize, QString sShape)
+{
+    if(nKernelSize % 2 != 1)
+    {
+        nKernelSize += 1;
+    }
+    m_bModifyImg = true;
+    cv::Mat dilateStruct;
+    if("RECT" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_RECT,cv::Size(nKernelSize,nKernelSize));
+    }
+    else if("CROSS" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_CROSS,cv::Size(nKernelSize,nKernelSize));
+    }
+    else if("ELLIPSE" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_ELLIPSE,cv::Size(nKernelSize,nKernelSize));
+    }
+    qDebug() << "hit1";
+    cv::morphologyEx(m_mImg, m_mTem, cv::MORPH_HITMISS, dilateStruct);
+    qDebug() << "hit2";
+    DisplayMat(m_mTem, m_label, m_dScaling);
+}
+
+void Form::ManualTop_HatSlot()
+{
+    m_bModifyImg = true;
+    m_pTopHatDialog = new TopHat(this);
+    m_pTopHatDialog->setAttribute(Qt::WA_DeleteOnClose);
+    m_pTopHatDialog->setModal(true);
+    m_pTopHatDialog->show();
+}
+void Form::ManualTopHatChangeSlot(int nKernelSize, QString sShape)
+{
+    if(nKernelSize % 2 != 1)
+    {
+        nKernelSize += 1;
+    }
+    m_bModifyImg = true;
+    cv::Mat dilateStruct;
+    if("RECT" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_RECT,cv::Size(nKernelSize,nKernelSize));
+    }
+    else if("CROSS" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_CROSS,cv::Size(nKernelSize,nKernelSize));
+    }
+    else if("ELLIPSE" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_ELLIPSE,cv::Size(nKernelSize,nKernelSize));
+    }
+    cv::morphologyEx(m_mImg, m_mTem, cv::MORPH_TOPHAT, dilateStruct);
+    DisplayMat(m_mTem, m_label, m_dScaling);
+}
+
+void Form::ManualBlack_HatSlot()
+{
+    m_bModifyImg = true;
+    m_pBlackHatDialog = new BlackHat(this);
+    m_pBlackHatDialog->setAttribute(Qt::WA_DeleteOnClose);
+    m_pBlackHatDialog->setModal(true);
+    m_pBlackHatDialog->show();
+}
+void Form::ManualBlackHatChangeSlot(int nKernelSize, QString sShape)
+{
+    if(nKernelSize % 2 != 1)
+    {
+        nKernelSize += 1;
+    }
+    m_bModifyImg = true;
+    cv::Mat dilateStruct;
+    if("RECT" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_RECT,cv::Size(nKernelSize,nKernelSize));
+    }
+    else if("CROSS" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_CROSS,cv::Size(nKernelSize,nKernelSize));
+    }
+    else if("ELLIPSE" == sShape)
+    {
+        dilateStruct = cv::getStructuringElement(cv::MORPH_ELLIPSE,cv::Size(nKernelSize,nKernelSize));
+    }
+    cv::morphologyEx(m_mImg, m_mTem, cv::MORPH_BLACKHAT, dilateStruct);
     DisplayMat(m_mTem, m_label, m_dScaling);
 }
 
@@ -785,7 +1064,7 @@ void Form::Connected_RegionSlot()
     int nRegionMax = 0;
     int nRegion8 = cv::connectedComponentsWithStats(m_mImg, mLabel1, mStats1, mCentroids1, 8);
 
-    for(int i = 0; i < nRegion8; i++)
+    for(int i = 1; i < nRegion8; i++)
     {
         int nArea = mStats1.at<int>(i, cv::CC_STAT_AREA);
         if( nArea > nRegionMax)
@@ -795,7 +1074,7 @@ void Form::Connected_RegionSlot()
     }
     cv::Mat mLabel2, mStats2, mCentroids2;
     int nRegion4 = cv::connectedComponentsWithStats(m_mImg, mLabel2, mStats2, mCentroids2, 4);
-    for(int i = 0; i < nRegion4; i++)
+    for(int i = 1; i < nRegion4; i++)
     {
         int nArea = mStats2.at<int>(i, cv::CC_STAT_AREA);
         if( nArea > nRegionMax)
@@ -806,12 +1085,12 @@ void Form::Connected_RegionSlot()
     nRegionMax = nRegionMax * m_dScaling;
 
     m_pConnectedRegionDialog = new ConnectedRegion(this, nRegionMax);
+    m_pConnectedRegionDialog->setAttribute(Qt::WA_DeleteOnClose);
     m_pConnectedRegionDialog->setModal(true);
     m_pConnectedRegionDialog->show();
 }
 void Form::ManualConnected_RegionSlot(int nValue, int ConnectedRegion48)
 {
-
     if(ConnectedRegion48 != 4 || ConnectedRegion48 != 8)
     {
         ConnectedRegion48 = 4;
@@ -906,7 +1185,8 @@ void Form::CancelLaplaceSliderSelectImg()
     DisplayMat(m_mImg, m_label, m_dScaling);
     m_pLaplaceDialog->close();
 }
-void Form::OKConnected_RegionSliderSelectImg()
+
+void Form::OKErodeSliderSelectImg()
 {
     m_bModifyImg = true;
     m_mImg = m_mTem.clone();
@@ -914,11 +1194,120 @@ void Form::OKConnected_RegionSliderSelectImg()
     vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
     // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
+    m_pErodeDialog->close();
+}
+void Form::CancelErodeSliderSelectImg()
+{
+    m_bModifyImg = true;
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    m_pErodeDialog->close();
+}
+void Form::OKDilateSliderSelectImg()
+{
+    m_bModifyImg = true;
+    m_mImg = m_mTem.clone();
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
+    m_pDilateDialog->close();
+}
+void Form::CancelDilateSliderSelectImg()
+{
+    m_bModifyImg = true;
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    m_pDilateDialog->close();
+}
+
+void Form::OKOpenSliderSelectImg()
+{
+    m_bModifyImg = true;
+    m_mImg = m_mTem.clone();
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
+    m_pOpenDialog->close();
+}
+void Form::CancelOpenSliderSelectImg()
+{
+    m_bModifyImg = true;
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    m_pOpenDialog->close();
+}
+
+void Form::OKCloseSliderSelectImg()
+{
+    m_bModifyImg = true;
+    m_mImg = m_mTem.clone();
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    m_pCloseDialog->close();
+}
+void Form::CancelCloseSliderSelectImg()
+{
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+
+void Form::OKHitMissSliderSelectImg()
+{
+    m_bModifyImg = true;
+    m_mImg = m_mTem.clone();
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
+    m_pHitMissDialog->close();
+}
+void Form::CancelHitMissSliderSelectImg()
+{
+    m_bModifyImg = true;
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    m_pHitMissDialog->close();
+}
+
+void Form::OKTopHatSliderSelectImg()
+{
+    m_bModifyImg = true;
+    m_mImg = m_mTem.clone();
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
+    m_pTopHatDialog->close();
+}
+void Form::CancelTopHatSliderSelectImg()
+{
+    m_bModifyImg = true;
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    m_pTopHatDialog->close();
+}
+
+void Form::OKBlackHatSliderSelectImg()
+{
+    m_bModifyImg = true;
+    m_mImg = m_mTem.clone();
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
+    DisplayMat(m_mImg, m_label, m_dScaling);
+    m_pBlackHatDialog->close();
+}
+void Form::CancelBlackHatSliderSelectImg()
+{
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+
+void Form::OKConnected_RegionSliderSelectImg()
+{
+    m_bModifyImg = true;
+    m_mImg = m_mTem.clone();
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
+    DisplayMat(m_mImg, m_label, m_dScaling);
     m_pConnectedRegionDialog->close();
 }
 void Form::CancelConnected_RegionSliderSelectImg()
 {
-    m_bModifyImg = true;
     DisplayMat(m_mImg, m_label, m_dScaling);
-    m_pConnectedRegionDialog->close();
 }

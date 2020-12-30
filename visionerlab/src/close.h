@@ -1,5 +1,5 @@
-#ifndef LAPLACE_H
-#define LAPLACE_H
+#ifndef CLOSE_H
+#define CLOSE_H
 
 #include <QDialog>
 #include <QSpinBox>
@@ -8,21 +8,23 @@
 #include <QLabel>
 #include <QDialogButtonBox>
 #include <opencv2/opencv.hpp>
+#include <QComboBox>
+
 namespace Ui {
-class Laplace;
+class Close;
 }
 
-class Laplace : public QDialog
+class Close : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit Laplace(QWidget *parent = nullptr);
-    ~Laplace();
+    explicit Close(QWidget *parent = nullptr);
+    ~Close();
 public:
     void ManualThresholdChangeSlot(int nValue);
 private:
-    Ui::Laplace *ui;
+    Ui::Close *ui;
     QWidget *m_parent;
     QSpinBox *m_pSpinBox;
     QSlider *m_pSlider;
@@ -30,13 +32,23 @@ private:
     QVBoxLayout *m_qButtonVer;
     QHBoxLayout *m_qSliderHor1;
     QHBoxLayout *m_qSliderHor2;
+    QHBoxLayout *m_qSliderHor3;
     QDialogButtonBox *button;
+
+    QLabel *pLabel1;
+    QLabel *pLabel2;
+    QLabel *pLabel3;
+    QString m_StructureType;
+    QComboBox *pComboBox1;
 private:
     void closeEvent(QCloseEvent *event);
 private slots:
-    void ManualLaplaceChangeSlot(int );
+    void ManualCloseChangeSlot(int );
+    void SetStructureType(QString);
 signals:
-    void sendManualLaplaceChange(int );
+    void sendManualCloseChange(int ,QString);
+private:
+
 };
 
-#endif // LAPLACE_H
+#endif // CLOSE_H

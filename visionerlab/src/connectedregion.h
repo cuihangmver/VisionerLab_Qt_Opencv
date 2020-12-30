@@ -37,6 +37,8 @@ private:
     QDialogButtonBox *button;
 
     double m_nConnectedComponents48Value;
+private:
+    void closeEvent(QCloseEvent *event);
 private slots:
     void ManualConnectedRegionChangeSlot(int );
     void SetConnectedComponents48Slot(QString);

@@ -53,7 +53,7 @@ Laplace::Laplace(QWidget *parent) :
 
 Laplace::~Laplace()
 {
-    delete m_parent;
+    /*
     delete m_pSpinBox;
     delete m_pSlider;
     delete m_pLabel;
@@ -62,6 +62,7 @@ Laplace::~Laplace()
     delete m_qSliderHor2;
     delete button;
     delete ui;
+    */
 }
 void Laplace::ManualLaplaceChangeSlot(int nValue)
 {
@@ -69,4 +70,9 @@ void Laplace::ManualLaplaceChangeSlot(int nValue)
     emit sendManualLaplaceChange(nValue);
     // 不加断开链接，执行第次越多，后面执行次数越多
     disconnect(this, 0, m_parent, 0);
+}
+
+void Laplace::closeEvent(QCloseEvent *event)
+{
+    this->close();
 }

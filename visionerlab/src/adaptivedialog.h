@@ -52,6 +52,9 @@ private:
     int m_nBlockSize;
     double m_dC;
     QWidget *m_pParent;
+private:
+    // 事件函数
+    void closeEvent(QCloseEvent *event);
 private slots:
     void SetMaxValue(QString sMaxValue);
     void SetAdaptiveMethod(QString sAdaptiveMethod);

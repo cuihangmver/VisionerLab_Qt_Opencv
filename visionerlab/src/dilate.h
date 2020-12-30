@@ -1,6 +1,7 @@
-#ifndef LAPLACE_H
-#define LAPLACE_H
+#ifndef DILATE_H
+#define DILATE_H
 
+#include <QDialog>
 #include <QDialog>
 #include <QSpinBox>
 #include <QSlider>
@@ -8,21 +9,22 @@
 #include <QLabel>
 #include <QDialogButtonBox>
 #include <opencv2/opencv.hpp>
+#include <QComboBox>
 namespace Ui {
-class Laplace;
+class Dilate;
 }
 
-class Laplace : public QDialog
+class Dilate : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit Laplace(QWidget *parent = nullptr);
-    ~Laplace();
+    explicit Dilate(QWidget *parent = nullptr);
+    ~Dilate();
 public:
     void ManualThresholdChangeSlot(int nValue);
 private:
-    Ui::Laplace *ui;
+    Ui::Dilate *ui;
     QWidget *m_parent;
     QSpinBox *m_pSpinBox;
     QSlider *m_pSlider;
@@ -30,13 +32,22 @@ private:
     QVBoxLayout *m_qButtonVer;
     QHBoxLayout *m_qSliderHor1;
     QHBoxLayout *m_qSliderHor2;
+    QHBoxLayout *m_qSliderHor3;
     QDialogButtonBox *button;
-private:
-    void closeEvent(QCloseEvent *event);
+
+    QLabel *pLabel1;
+    QLabel *pLabel2;
+    QLabel *pLabel3;
+    QString m_StructureType;
+    QComboBox *pComboBox1;
+
 private slots:
-    void ManualLaplaceChangeSlot(int );
+    void ManualDilateChangeSlot(int );
+    void SetStructureType(QString);
 signals:
-    void sendManualLaplaceChange(int );
+    void sendManualDilateChange(int ,QString);
+private:
+
 };
 
-#endif // LAPLACE_H
+#endif // DILATE_H
