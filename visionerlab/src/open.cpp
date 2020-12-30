@@ -62,15 +62,7 @@ Open::Open(QWidget *parent) :
 
 Open::~Open()
 {
-    delete m_parent;
-    delete m_pSpinBox;
-    delete m_pSlider;
-    delete m_pLabel;
-    delete m_qButtonVer;
-    delete m_qSliderHor1;
-    delete m_qSliderHor2;
-    delete button;
-    delete ui;
+
 }
 void Open::ManualOpenChangeSlot(int nValue)
 {
@@ -82,4 +74,8 @@ void Open::ManualOpenChangeSlot(int nValue)
 void Open::SetStructureType(QString StructureType)
 {
     m_StructureType = StructureType;
+}
+void Open::closeEvent(QCloseEvent *event)
+{
+    this->close();
 }

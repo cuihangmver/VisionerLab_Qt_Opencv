@@ -110,8 +110,6 @@
      <addaction name="actionMean"/>
      <addaction name="actionMedian"/>
      <addaction name="separator"/>
-     <addaction name="actionLocal_Min"/>
-     <addaction name="actionLocal_Max"/>
     </widget>
     <widget class="QMenu" name="menuMorphology">
      <property name="title">
@@ -119,6 +117,11 @@
      </property>
      <addaction name="actionErode"/>
      <addaction name="actionDilate"/>
+     <addaction name="actionOpen_2"/>
+     <addaction name="actionClose_2"/>
+     <addaction name="actionHit_Miss"/>
+     <addaction name="actionTop_Hat"/>
+     <addaction name="actionBlack_Hat"/>
     </widget>
     <widget class="QMenu" name="menuSegmentation">
      <property name="title">
@@ -139,8 +142,9 @@
    </widget>
    <widget class="QMenu" name="menuAnalyze">
     <property name="title">
-     <string>Analyze</string>
+     <string>Calibration</string>
     </property>
+    <addaction name="actionStructured_Light"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
@@ -404,6 +408,46 @@
   <action name="actionConnected_Region">
    <property name="text">
     <string>Connected Region</string>
+   </property>
+  </action>
+  <action name="actionStructured_Light">
+   <property name="text">
+    <string>Structured Light</string>
+   </property>
+  </action>
+  <action name="actionOpen_2">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionClose_2">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="actionHit">
+   <property name="text">
+    <string>Hit</string>
+   </property>
+  </action>
+  <action name="actionMiss">
+   <property name="text">
+    <string>Miss</string>
+   </property>
+  </action>
+  <action name="actionHit_Miss">
+   <property name="text">
+    <string>Hit Miss</string>
+   </property>
+  </action>
+  <action name="actionTop_Hat">
+   <property name="text">
+    <string>Top Hat</string>
+   </property>
+  </action>
+  <action name="actionBlack_Hat">
+   <property name="text">
+    <string>Black Hat</string>
    </property>
   </action>
  </widget>

@@ -62,15 +62,7 @@ Erode::Erode(QWidget *parent) :
 
 Erode::~Erode()
 {
-    delete m_parent;
-    delete m_pSpinBox;
-    delete m_pSlider;
-    delete m_pLabel;
-    delete m_qButtonVer;
-    delete m_qSliderHor1;
-    delete m_qSliderHor2;
-    delete button;
-    delete ui;
+
 }
 void Erode::ManualErodeChangeSlot(int nValue)
 {
@@ -82,4 +74,8 @@ void Erode::ManualErodeChangeSlot(int nValue)
 void Erode::SetStructureType(QString StructureType)
 {
     m_StructureType = StructureType;
+}
+void Erode::closeEvent(QCloseEvent *event)
+{
+    this->close();
 }

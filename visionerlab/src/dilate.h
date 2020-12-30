@@ -40,7 +40,8 @@ private:
     QLabel *pLabel3;
     QString m_StructureType;
     QComboBox *pComboBox1;
-
+private:
+    void closeEvent(QCloseEvent *event);
 private slots:
     void ManualDilateChangeSlot(int );
     void SetStructureType(QString);

@@ -62,15 +62,7 @@ TopHat::TopHat(QWidget *parent) :
 
 TopHat::~TopHat()
 {
-    delete m_parent;
-    delete m_pSpinBox;
-    delete m_pSlider;
-    delete m_pLabel;
-    delete m_qButtonVer;
-    delete m_qSliderHor1;
-    delete m_qSliderHor2;
-    delete button;
-    delete ui;
+
 }
 void TopHat::ManualTopHatChangeSlot(int nValue)
 {
@@ -82,4 +74,8 @@ void TopHat::ManualTopHatChangeSlot(int nValue)
 void TopHat::SetStructureType(QString StructureType)
 {
     m_StructureType = StructureType;
+}
+void TopHat::closeEvent(QCloseEvent *event)
+{
+    this->close();
 }

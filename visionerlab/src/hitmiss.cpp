@@ -62,15 +62,7 @@ HitMiss::HitMiss(QWidget *parent) :
 
 HitMiss::~HitMiss()
 {
-    delete m_parent;
-    delete m_pSpinBox;
-    delete m_pSlider;
-    delete m_pLabel;
-    delete m_qButtonVer;
-    delete m_qSliderHor1;
-    delete m_qSliderHor2;
-    delete button;
-    delete ui;
+
 }
 void HitMiss::ManualHitMissChangeSlot(int nValue)
 {
@@ -82,4 +74,8 @@ void HitMiss::ManualHitMissChangeSlot(int nValue)
 void HitMiss::SetStructureType(QString StructureType)
 {
     m_StructureType = StructureType;
+}
+void HitMiss::closeEvent(QCloseEvent *event)
+{
+    this->close();
 }

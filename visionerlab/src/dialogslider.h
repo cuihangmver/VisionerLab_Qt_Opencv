@@ -22,6 +22,8 @@ class DialogSlider : public QDialog
 public:
     explicit DialogSlider(QWidget *parent = nullptr, int nDepth = 0);
     ~DialogSlider();
+private:
+    void closeEvent(QCloseEvent *event);
 private slots:
     void ManualThresholdChangeSlot(int nValue);
 private:

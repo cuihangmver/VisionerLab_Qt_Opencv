@@ -84,78 +84,7 @@ DialogSlider::DialogSlider(QWidget *parent, int nDepth) :
 
 DialogSlider::~DialogSlider()
 {
-    if(nullptr != button)
-    {
-        delete button;
-        button = nullptr;
-    }
-    if(nullptr != button1)
-    {
-        delete button1;
-        button1 = nullptr;
-    }
-    if(nullptr != button2)
-    {
-        delete button2;
-        button2 = nullptr;
-    }
-    if(nullptr != pLabel1)
-    {
-        delete pLabel1;
-        pLabel1 = nullptr;
-    }
-    if(nullptr != pLabel2)
-    {
-        delete pLabel2;
-        pLabel2 = nullptr;
-    }
-    if(nullptr != pLabel3)
-    {
-        delete pLabel3;
-        pLabel3 = nullptr;
-    }
 
-    if(nullptr != qSliderHor1)
-    {
-        delete qSliderHor1;
-        qSliderHor1 = nullptr;
-    }
-    if(nullptr != qSliderHor2)
-    {
-        delete qSliderHor2;
-        qSliderHor2 = nullptr;
-    }
-    if(nullptr != qSliderHor3)
-    {
-        delete qSliderHor3;
-        qSliderHor3 = nullptr;
-    }
-    if(nullptr != qSliderHor4)
-    {
-        delete qSliderHor4;
-        qSliderHor4 = nullptr;
-    }
-
-    if(nullptr != qButtonVer)
-    {
-        delete qButtonVer;
-        qButtonVer = nullptr;
-    }
-    if(nullptr != pSpinBox)
-    {
-        delete pSpinBox;
-        pSpinBox = nullptr;
-    }
-    if(nullptr != pSlider)
-    {
-        delete pSlider;
-        pSlider = nullptr;
-    }
-    if(nullptr != ui)
-    {
-        delete ui;
-        ui = nullptr;
-    }
 }
 
 void DialogSlider::ManualThresholdChangeSlot(int nValue)
@@ -164,4 +93,8 @@ void DialogSlider::ManualThresholdChangeSlot(int nValue)
     emit sendManualThresholdChange(nValue);
     // 不加断开链接，执行第次越多，后面执行次数越多
     disconnect(this, 0, m_parent, 0);
+}
+void DialogSlider::closeEvent(QCloseEvent *event)
+{
+    this->close();
 }

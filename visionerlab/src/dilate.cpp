@@ -62,15 +62,7 @@ Dilate::Dilate(QWidget *parent) :
 
 Dilate::~Dilate()
 {
-    delete m_parent;
-    delete m_pSpinBox;
-    delete m_pSlider;
-    delete m_pLabel;
-    delete m_qButtonVer;
-    delete m_qSliderHor1;
-    delete m_qSliderHor2;
-    delete button;
-    delete ui;
+
 }
 void Dilate::ManualDilateChangeSlot(int nValue)
 {
@@ -82,4 +74,8 @@ void Dilate::ManualDilateChangeSlot(int nValue)
 void Dilate::SetStructureType(QString StructureType)
 {
     m_StructureType = StructureType;
+}
+void Dilate::closeEvent(QCloseEvent *event)
+{
+    this->close();
 }

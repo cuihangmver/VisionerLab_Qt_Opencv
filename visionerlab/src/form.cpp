@@ -1144,14 +1144,11 @@ void Form::OKThresholdSliderSelectImg()
     vmStackFront.clear();
     vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
-    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
     m_dialogSlider->close();
 }
 void Form::CancelThresholdSliderSelectImg()
 {
-    m_bModifyImg = true;
     DisplayMat(m_mImg, m_label, m_dScaling);
-    m_dialogSlider->close();
 }
 void Form::OKGaussianSliderSelectImg()
 {
@@ -1160,14 +1157,11 @@ void Form::OKGaussianSliderSelectImg()
     vmStackFront.clear();
     vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
-    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
     m_pGaussianDialog->close();
 }
 void Form::CancelGaussianSliderSelectImg()
 {
-    m_bModifyImg = true;
     DisplayMat(m_mImg, m_label, m_dScaling);
-    m_pGaussianDialog->close();
 }
 void Form::OKLaplaceSliderSelectImg()
 {
@@ -1193,14 +1187,11 @@ void Form::OKErodeSliderSelectImg()
     vmStackFront.clear();
     vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
-    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
     m_pErodeDialog->close();
 }
 void Form::CancelErodeSliderSelectImg()
 {
-    m_bModifyImg = true;
     DisplayMat(m_mImg, m_label, m_dScaling);
-    m_pErodeDialog->close();
 }
 void Form::OKDilateSliderSelectImg()
 {
@@ -1209,14 +1200,11 @@ void Form::OKDilateSliderSelectImg()
     vmStackFront.clear();
     vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
-    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
     m_pDilateDialog->close();
 }
 void Form::CancelDilateSliderSelectImg()
 {
-    m_bModifyImg = true;
     DisplayMat(m_mImg, m_label, m_dScaling);
-    m_pDilateDialog->close();
 }
 
 void Form::OKOpenSliderSelectImg()
@@ -1226,14 +1214,11 @@ void Form::OKOpenSliderSelectImg()
     vmStackFront.clear();
     vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
-    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
     m_pOpenDialog->close();
 }
 void Form::CancelOpenSliderSelectImg()
 {
-    m_bModifyImg = true;
     DisplayMat(m_mImg, m_label, m_dScaling);
-    m_pOpenDialog->close();
 }
 
 void Form::OKCloseSliderSelectImg()
@@ -1257,14 +1242,11 @@ void Form::OKHitMissSliderSelectImg()
     vmStackFront.clear();
     vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
-    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
     m_pHitMissDialog->close();
 }
 void Form::CancelHitMissSliderSelectImg()
 {
-    m_bModifyImg = true;
     DisplayMat(m_mImg, m_label, m_dScaling);
-    m_pHitMissDialog->close();
 }
 
 void Form::OKTopHatSliderSelectImg()
@@ -1274,14 +1256,11 @@ void Form::OKTopHatSliderSelectImg()
     vmStackFront.clear();
     vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
-    // m_dialogSlider->setAttribute(Qt::WA_DeleteOnClose);
     m_pTopHatDialog->close();
 }
 void Form::CancelTopHatSliderSelectImg()
 {
-    m_bModifyImg = true;
-    DisplayMat(m_mImg, m_label, m_dScaling);
-    m_pTopHatDialog->close();
+    DisplayMat(m_mImg, m_label, m_dScaling); 
 }
 
 void Form::OKBlackHatSliderSelectImg()

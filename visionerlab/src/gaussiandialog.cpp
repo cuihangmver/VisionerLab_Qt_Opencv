@@ -54,15 +54,7 @@ GaussianDialog::GaussianDialog(QWidget *parent) :
 
 GaussianDialog::~GaussianDialog()
 {
-    delete m_parent;
-    delete m_pSpinBox;
-    delete m_pSlider;
-    delete m_pLabel;
-    delete m_qButtonVer;
-    delete m_qSliderHor1;
-    delete m_qSliderHor2;
-    delete button;
-    delete ui;
+
 }
 void GaussianDialog::ManualGaussianChangeSlot(int nValue)
 {
@@ -70,4 +62,8 @@ void GaussianDialog::ManualGaussianChangeSlot(int nValue)
     emit sendManualGaussianChange(nValue);
     // 不加断开链接，执行第次越多，后面执行次数越多
     disconnect(this, 0, m_parent, 0);
+}
+void GaussianDialog::closeEvent(QCloseEvent *event)
+{
+    this->close();
 }

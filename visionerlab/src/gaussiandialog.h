@@ -31,6 +31,8 @@ private:
     QHBoxLayout *m_qSliderHor1;
     QHBoxLayout *m_qSliderHor2;
     QDialogButtonBox *button;
+private:
+    void closeEvent(QCloseEvent *event);
 private slots:
     void ManualGaussianChangeSlot(int );
 signals:
