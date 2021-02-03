@@ -987,9 +987,9 @@ void Form::ManualHitMissChangeSlot(int nKernelSize, QString sShape)
     {
         dilateStruct = cv::getStructuringElement(cv::MORPH_ELLIPSE,cv::Size(nKernelSize,nKernelSize));
     }
-    qDebug() << "hit1";
+
     cv::morphologyEx(m_mImg, m_mTem, cv::MORPH_HITMISS, dilateStruct);
-    qDebug() << "hit2";
+
     DisplayMat(m_mTem, m_label, m_dScaling);
 }
 
@@ -1288,5 +1288,31 @@ void Form::OKConnected_RegionSliderSelectImg()
 }
 void Form::CancelConnected_RegionSliderSelectImg()
 {
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+
+// 翻转
+void Form::FlipXSlot()
+{
+    m_bModifyImg = true;
+    cv::flip(m_mImg,m_mImg, 0);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+void Form::FlipYSlot()
+{
+    m_bModifyImg = true;
+    cv::flip(m_mImg,m_mImg, 1);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
+    DisplayMat(m_mImg, m_label, m_dScaling);
+}
+void Form::FlipXYSlot()
+{
+    m_bModifyImg = true;
+    cv::flip(m_mImg,m_mImg, -1);
+    vmStackFront.clear();
+    vmStackBack.push_back(m_mImg.clone());
     DisplayMat(m_mImg, m_label, m_dScaling);
 }

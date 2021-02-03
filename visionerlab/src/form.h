@@ -30,6 +30,8 @@
 #include "hitmiss.h"
 #include "tophat.h"
 #include "blackhat.h"
+#include <QTextCodec>
+
 namespace Ui {
 class Form;
 }
@@ -167,6 +169,9 @@ private slots:
     void OKCloseSliderSelectImg();
     void CancelCloseSliderSelectImg();
     void UpdateAllSlot();
+    void FlipXSlot();
+    void FlipYSlot();
+    void FlipXYSlot();
 signals:
     // 信号函数
     void sendMouse(int, int, QColor, int );

@@ -35,48 +35,7 @@ CentralWidget::CentralWidget(int a, QWidget *parent)
 
 CentralWidget::~CentralWidget()
 {
-    /*
-    if(nullptr != btn1)
-    {
-        delete btn1;
-        btn1 = nullptr;
-    }
-    if(nullptr != btn2)
-    {
-        delete btn2;
-        btn2 = nullptr;
-    }
-    if(nullptr != btn3)
-    {
-        delete btn3;
-        btn3 = nullptr;
-    }
-    if(nullptr != qButtonHor)
-    {
-        delete qButtonHor;
-        qButtonHor = nullptr;
-    }
-    if(nullptr != qButtonVer)
-    {
-        delete qButtonVer;
-        qButtonVer = nullptr;
-    }
-    if(nullptr != m_textedit)
-    {
-        delete m_textedit;
-        m_textedit = nullptr;
-    }
-    if(nullptr != m_openimg)
-    {
-        delete m_openimg;
-        m_openimg = nullptr;
-    }
-    if(nullptr != ui)
-    {
-        delete ui;
-        ui = nullptr;
-    }
-    */
+
 }
 
 void CentralWidget::dragEnterEvent(QDragEnterEvent *event)
@@ -146,6 +105,9 @@ void CentralWidget::dropEvent(QDropEvent *event)
             std::string s19 = "actionHit_Miss";
             std::string s20 = "actionTop_Hat";
             std::string s21 = "actionBlack_Hat";
+            std::string s22 = "actionFlip_X_2";
+            std::string s23 = "actionFlip_Y_2";
+            std::string s24 = "actionFlip_XY";
             vsShowButtons.push_back(s1);
             vsShowButtons.push_back(s2);
             vsShowButtons.push_back(s3);
@@ -167,6 +129,9 @@ void CentralWidget::dropEvent(QDropEvent *event)
             vsShowButtons.push_back(s19);
             vsShowButtons.push_back(s20);
             vsShowButtons.push_back(s21);
+            vsShowButtons.push_back(s22);
+            vsShowButtons.push_back(s23);
+            vsShowButtons.push_back(s24);
             emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
             disconnect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
 
@@ -500,8 +465,6 @@ void CentralWidget::Black_HatSlot()
 
 void CentralWidget::ButtonShowManageCloseGraySlot(std::vector<std::string> vsShowButtons, std::vector<std::string> vsCloseButtons)
 {
-    qDebug() << vsShowButtons.size();
-    qDebug() << vsCloseButtons.size();
     connect(this, SIGNAL(sendButtonShowManage(std::vector<std::string> ,std::vector<std::string>)),m_parentCopy,SLOT(ButtonShowManage(std::vector<std::string> ,std::vector<std::string>)));
     emit sendButtonShowManage(vsShowButtons, vsCloseButtons);
 }
@@ -559,4 +522,65 @@ void CentralWidget::Structured_LightParamSlot
     qDebug() << "dcot = " << dcot;
     qDebug() << "dBaseLine = " << dBaseLine;
     qDebug() << "dF = " << dF;
+}
+
+void CentralWidget::EyeHandCalibrationSlot()
+{
+    m_pCalibrationObj = new CCalibration();
+    m_pEyeHandCalibration = new EyeHandCalibration(this);
+    m_pEyeHandCalibration->setModal(true);
+    m_pEyeHandCalibration->setAttribute(Qt::WA_DeleteOnClose);
+    m_pEyeHandCalibration->show();
+}
+
+void CentralWidget::EyeHandCalibrationParamSlot
+(
+        std::string sPathTCP, std::string sPathECam
+)
+{
+    std::vector<Eigen::MatrixXd> vmEyeHand;
+    std::vector<Eigen::MatrixXd> vmTCP;
+    m_pCalibrationObj->HandEyeReadData(sPathECam, sPathTCP, vmEyeHand, vmTCP);
+    Eigen::Matrix4d mHandEye = m_pCalibrationObj->HandEyeCalibration(vmEyeHand, vmTCP);
+    qDebug() << mHandEye(0, 0) << " " << mHandEye(0, 1)
+             << " " << mHandEye(0, 2) << " " << mHandEye(0, 3);
+    qDebug() << mHandEye(1, 0) << " " << mHandEye(1, 1)
+             << " " << mHandEye(1, 2) << " " << mHandEye(1, 3);
+    qDebug() << mHandEye(2, 0) << " " << mHandEye(2, 1)
+             << " " << mHandEye(2, 2) << " " << mHandEye(2, 3);
+    qDebug() << mHandEye(3, 0) << " " << mHandEye(3, 1)
+             << " " << mHandEye(3, 2) << " " << mHandEye(3, 3);
+    Eigen::Vector4d vPointCam(0.0, 0.0, 340.0, 1.0);
+
+    Eigen::Vector4d vPointEnd(4, 1);
+    vPointEnd = mHandEye * vPointCam;
+    Eigen::Matrix4d mTCP;
+
+    double dRX = 93.9342 / 180.0 * 3.1415926;
+    double dRY = -69.7619 / 180.0 * 3.1415926;
+    double dRZ = -1.1832 / 180.0 * 3.1415926;
+    Eigen::Vector3d vEuler(dRX, dRY, dRZ);
+    // 欧拉角转旋转矩阵
+    //Eigen::Matrix3d mTCPMatrix3 = Eigen::AngleAxisd(vEuler[0], Eigen::Vector3d::UnitX()) *
+    //              Eigen::AngleAxisd(vEuler[1], Eigen::Vector3d::UnitY()) *
+     //             Eigen::AngleAxisd(vEuler[2], Eigen::Vector3d::UnitZ());
+
+
+}
+
+// 翻转
+void CentralWidget::FlipXSlot()
+{
+    connect(this, SIGNAL(sendFlipXSlot()), m_openimg, SLOT(FlipXSlot()));
+    emit sendFlipXSlot();
+}
+void CentralWidget::FlipYSlot()
+{
+    connect(this, SIGNAL(sendFlipYSlot()), m_openimg, SLOT(FlipYSlot()));
+    emit sendFlipYSlot();
+}
+void CentralWidget::FlipXYSlot()
+{
+    connect(this, SIGNAL(sendFlipXYSlot()), m_openimg, SLOT(FlipXYSlot()));
+    emit sendFlipXYSlot();
 }

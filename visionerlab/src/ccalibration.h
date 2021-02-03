@@ -5,6 +5,8 @@
 #include <QDialog>
 #include <QDebug>
 #include <opencv2/opencv.hpp>
+#include<eigen/Geometry>
+#include<unsupported/Eigen/KroneckerProduct>
 class CCalibration
 {
 public:
@@ -16,7 +18,7 @@ public:
             std::vector<cv::Point> &vpLeft,
             std::vector<cv::Point> &vpRight
     );
-    void CCalibration::StructedLightCalibration
+    void StructedLightCalibration
     (
             std::vector<cv::Point> vpLeft,
             std::vector<cv::Point> vpRight,
@@ -28,6 +30,18 @@ public:
             double &dcot,
             double &dBaseLine,
             double &dF
+    );
+    void HandEyeReadData
+    (
+            std::string sPathEyeHand,
+            std::string sPathTCP,
+            std::vector<Eigen::MatrixXd> &vmEyeHand,
+            std::vector<Eigen::MatrixXd> &vmTCP
+    );
+    Eigen::Matrix4d HandEyeCalibration
+    (
+            std::vector<Eigen::MatrixXd> vmEyeHand,
+            std::vector<Eigen::MatrixXd> vmTCP
     );
 };
 

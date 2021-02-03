@@ -27,6 +27,7 @@
 //放下事件
 #include <QDropEvent>
 #include <iostream>
+#include "clog.h"
 namespace Ui {
 class MainWindow;
 }

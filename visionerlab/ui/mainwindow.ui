@@ -129,6 +129,21 @@
      </property>
      <addaction name="actionConnected_Region"/>
     </widget>
+    <widget class="QMenu" name="menuAffine_Transformation">
+     <property name="title">
+      <string>Affine Transformation</string>
+     </property>
+     <widget class="QMenu" name="menuFlip">
+      <property name="title">
+       <string>Flip</string>
+      </property>
+      <addaction name="separator"/>
+      <addaction name="actionFlip_X_2"/>
+      <addaction name="actionFlip_Y_2"/>
+      <addaction name="actionFlip_XY"/>
+     </widget>
+     <addaction name="menuFlip"/>
+    </widget>
     <addaction name="actionSize"/>
     <addaction name="actionGeometric"/>
     <addaction name="actionQuantize"/>
@@ -137,7 +152,7 @@
     <addaction name="menuHistogram"/>
     <addaction name="menuFilter"/>
     <addaction name="menuMorphology"/>
-    <addaction name="actionAffine_Transformation"/>
+    <addaction name="menuAffine_Transformation"/>
     <addaction name="menuSegmentation"/>
    </widget>
    <widget class="QMenu" name="menuAnalyze">
@@ -145,6 +160,7 @@
      <string>Calibration</string>
     </property>
     <addaction name="actionStructured_Light"/>
+    <addaction name="actionEyeHandCalibration"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
@@ -370,11 +386,6 @@
     <string>Laplace</string>
    </property>
   </action>
-  <action name="actionAffine_Transformation">
-   <property name="text">
-    <string>Affine Transformation</string>
-   </property>
-  </action>
   <action name="actionMean">
    <property name="text">
     <string>Mean</string>
@@ -448,6 +459,31 @@
   <action name="actionBlack_Hat">
    <property name="text">
     <string>Black Hat</string>
+   </property>
+  </action>
+  <action name="actionEyeHandCalibration">
+   <property name="text">
+    <string>EyeHandCalibration</string>
+   </property>
+  </action>
+  <action name="actionFlip_Y">
+   <property name="text">
+    <string>Flip Y</string>
+   </property>
+  </action>
+  <action name="actionFlip_X_2">
+   <property name="text">
+    <string>Flip X</string>
+   </property>
+  </action>
+  <action name="actionFlip_Y_2">
+   <property name="text">
+    <string>Flip Y</string>
+   </property>
+  </action>
+  <action name="actionFlip_XY">
+   <property name="text">
+    <string>Flip XY</string>
    </property>
   </action>
  </widget>

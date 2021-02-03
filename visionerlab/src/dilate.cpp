@@ -13,7 +13,7 @@ Dilate::Dilate(QWidget *parent) :
     m_pLabel->setText("Level");
     m_parent = parent;
     int nMin = 3;
-    int nMax = 29;
+    int nMax = 91;
     int nSingleStep = 2;
     // 微调框
     m_pSpinBox = new QSpinBox(this);

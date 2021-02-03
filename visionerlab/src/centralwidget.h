@@ -13,6 +13,8 @@
 #include "formnotvisualized.h"
 #include "cstructuredlightcalibration.h"
 #include "ccalibration.h"
+#include "eyehandcalibration.h"
+#include <eigen/Geometry>
 
 namespace Ui {
 class CentralWidget;
@@ -44,6 +46,7 @@ private:
     QTextEdit *m_textedit;
     Form *m_openimg;
     CStructuredLightCalibration *m_pCStructLightObj;
+    EyeHandCalibration *m_pEyeHandCalibration;
     CCalibration *m_pCalibrationObj;
 
     QHBoxLayout *qButtonHor;
@@ -101,6 +104,14 @@ private slots:
             std::string sPath, cv::Point pWidthHeight,
             double dPerMove, double dDis2Line, double dC
     );
+    void EyeHandCalibrationSlot();
+    void EyeHandCalibrationParamSlot
+    (
+            std::string sPathTCP, std::string sPathECam
+    );
+    void FlipXSlot();
+    void FlipYSlot();
+    void FlipXYSlot();
     // 定义信号，可以与子窗口进行通信
 signals:
     void sendImgCenter(cv::Mat, INFOR_BASE::sImgInfor, int);
@@ -139,6 +150,9 @@ signals:
     void sendBlack_HatSlot();
     void sendStructured_LightSlot();
     void sendUpdateAllSlot();
+    void sendFlipXSlot();
+    void sendFlipYSlot();
+    void sendFlipXYSlot();
 };
 
 #endif // CENTRALWIDGET_H

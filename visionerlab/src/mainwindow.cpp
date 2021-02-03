@@ -45,9 +45,20 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionTop_Hat, SIGNAL(triggered()), c,SLOT(Top_HatSlot()));
     connect(ui->actionBlack_Hat, SIGNAL(triggered()), c,SLOT(Black_HatSlot()));
     connect(ui->actionStructured_Light, SIGNAL(triggered()), c,SLOT(Structured_LightSlot()));
+    connect(ui->actionEyeHandCalibration, SIGNAL(triggered()), c,SLOT(EyeHandCalibrationSlot()));
 
+    // 翻转
+    connect(ui->actionFlip_X_2, SIGNAL(triggered()), c,SLOT(FlipXSlot()));
+    connect(ui->actionFlip_Y_2, SIGNAL(triggered()), c,SLOT(FlipYSlot()));
+    connect(ui->actionFlip_XY, SIGNAL(triggered()), c,SLOT(FlipXYSlot()));
 
-
+    // 输出LOG信息，定义一次，全局都能用
+    // qDebug：     调试信息
+    // qWarning：   警告信息
+    // qCritical：  严重错误
+    // qFatal：     致命错误
+    qInstallMessageHandler(outputMessage);
+    qDebug("11111111");
     initButton(ui);
     m_ui = ui;
     m_parent = parent;
@@ -101,6 +112,10 @@ void MainWindow::initButton(Ui::MainWindow *ui)
     ui->actionBlack_Hat->setDisabled(true);
     ui->actionMean->setDisabled(true);
     ui->actionMedian->setDisabled(true);
+
+    ui->actionFlip_X_2->setDisabled(true);
+    ui->actionFlip_Y_2->setDisabled(true);
+    ui->actionFlip_XY->setDisabled(true);
 }
 
 void MainWindow::OpenNew()
@@ -154,13 +169,16 @@ void MainWindow::ButtonShowManage(std::vector<std::string> vsShowButtons, std::v
     std::string s19 = "actionHit_Miss";
     std::string s20 = "actionTop_Hat";
     std::string s21 = "actionBlack_Hat";
-    qDebug() << vsShowButtons.size();
-    qDebug() << vsCloseButtons.size();
+
+    std::string s22 = "actionFlip_X_2";
+    std::string s23 = "actionFlip_Y_2";
+    std::string s24 = "actionFlip_XY";
+
     for(int i = 0; i < vsShowButtons.size(); i++)
     {
 
         QString qstr2 = QString::fromStdString(vsShowButtons[i]);
-        qDebug() << qstr2;
+
         if(s1 == vsShowButtons[i])
         {
             ui->actionRGB->setDisabled(false);
@@ -245,12 +263,24 @@ void MainWindow::ButtonShowManage(std::vector<std::string> vsShowButtons, std::v
         {
             ui->actionBlack_Hat->setDisabled(false);
         }
+        else if(s22 == vsShowButtons[i])
+        {
+            ui->actionFlip_X_2->setDisabled(false);
+        }
+        else if(s23 == vsShowButtons[i])
+        {
+            ui->actionFlip_Y_2->setDisabled(false);
+        }
+        else if(s24 == vsShowButtons[i])
+        {
+            ui->actionFlip_XY->setDisabled(false);
+        }
     }
 
     for(int i = 0; i < vsCloseButtons.size(); i++)
     {
         QString qstr2 = QString::fromStdString(vsCloseButtons[i]);
-        qDebug() << qstr2;
+
         if(s1 == vsCloseButtons[i])
         {
             ui->actionRGB->setDisabled(true);
@@ -334,6 +364,18 @@ void MainWindow::ButtonShowManage(std::vector<std::string> vsShowButtons, std::v
         else if(s21 == vsCloseButtons[i])
         {
             ui->actionBlack_Hat->setDisabled(true);
+        }
+        else if(s22 == vsShowButtons[i])
+        {
+            ui->actionFlip_X_2->setDisabled(true);
+        }
+        else if(s23 == vsShowButtons[i])
+        {
+            ui->actionFlip_Y_2->setDisabled(true);
+        }
+        else if(s24 == vsShowButtons[i])
+        {
+            ui->actionFlip_XY->setDisabled(true);
         }
     }
 }

@@ -38,12 +38,26 @@ SOURCES += \
     adaptivedialog.cpp \
     gaussiandialog.cpp \
     laplace.cpp \
-    connectedregion.cpp
+    connectedregion.cpp \
+    cvlimgprocbase.cpp \
+    erode.cpp \
+    ccalibration.cpp \
+    formnotvisualized.cpp \
+    cstructuredlightcalibration.cpp \
+    dilate.cpp \
+    open.cpp \
+    close.cpp \
+    hitmiss.cpp \
+    tophat.cpp \
+    blackhat.cpp \
+    eyehandcalibration.cpp \
+    clog.cpp
 
 # opencv3.4.0
 INCLUDEPATH += E:/ProfessionalSoftware/QT/opencv/opencv/build/include \
                E:/ProfessionalSoftware/QT/opencv/opencv/build/include/opencv \
-               E:/ProfessionalSoftware/QT/opencv/opencv/build/include/opencv2
+               E:/ProfessionalSoftware/QT/opencv/opencv/build/include/opencv2 \
+               D:/QTProj/ImLab/eigen-3.3.9
 LIBS+=E:/ProfessionalSoftware/QT/opencv/opencv/build/x64/vc14/lib/opencv_world340d.lib
 LIBS+=E:/ProfessionalSoftware/QT/opencv/opencv/build/x64/vc14/lib/opencv_world340.lib
 HEADERS += \
@@ -55,7 +69,21 @@ HEADERS += \
     adaptivedialog.h \
     gaussiandialog.h \
     laplace.h \
-    connectedregion.h
+    connectedregion.h \
+    cvlimgprocbase.h \
+    erode.h \
+    ccalibration.h \
+    formnotvisualized.h \
+    cstructuredlightcalibration.h \
+    dilate.h \
+    open.h \
+    close.h \
+    hitmiss.h \
+    tophat.h \
+    blackhat.h \
+    eyehandcalibration.h \
+    Log.hpp \
+    clog.h
 
 FORMS += \
         mainwindow.ui \
@@ -65,7 +93,16 @@ FORMS += \
     adaptivedialog.ui \
     gaussiandialog.ui \
     laplace.ui \
-    connectedregion.ui
+    connectedregion.ui \
+    erode.ui \
+    cstructuredlightcalibration.ui \
+    dilate.ui \
+    open.ui \
+    close.ui \
+    hitmiss.ui \
+    tophat.ui \
+    blackhat.ui \
+    eyehandcalibration.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

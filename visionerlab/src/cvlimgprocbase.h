@@ -10,7 +10,8 @@
 #include <windows.h>
 #include <QDebug>
 #include "inforbase.h"
- #include <climits>
+#include <climits>
+#include<eigen/Geometry>
 using namespace INFOR_BASE;
 class CVLImgProcBase
 {
